@@ -14,6 +14,15 @@ enum AlgorithmType: String, CaseIterable, Identifiable {
     case graph = "Graph"
 }
 
+enum DifficultyType: CaseIterable, Identifiable {
+    case bestCase
+    case worstCase
+    case randomCase
+    case sampleCase
+
+    var id: Self { self }
+}
+
 struct Algorithm: Identifiable {
     let id = UUID()
     let title: String

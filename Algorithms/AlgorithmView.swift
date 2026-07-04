@@ -9,15 +9,16 @@ import SwiftUI
 
 struct AlgorithmView: View {
     @Environment(ViewModel.self) var viewModel: ViewModel
-    let algo: Algorithm
+    let algorithm: Algorithm
 
     var body: some View {
-        VStack(spacing: 20) {
-            Text(algo.title)
-                .font(.largeTitle)
-
-            Text(algo.description)
-                .padding()
+        switch algorithm.type {
+        case .sorting:
+            SortAlgorithmsView(algorithm: algorithm)
+        case .searching:
+            Text("Algorithm unsupported for the moment")
+        case .graph:
+            Text("Algorithm unsupported for the moment")
         }
     }
 }

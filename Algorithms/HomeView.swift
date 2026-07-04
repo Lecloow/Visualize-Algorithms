@@ -29,7 +29,7 @@ struct HomeView: View {
             }
         }
         .sheet(item: $selectedAlgo) { algo in
-            AlgorithmView(algo: algo)
+            AlgorithmView(algorithm: algo)
         }
     }
 }
