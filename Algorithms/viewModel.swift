@@ -34,41 +34,43 @@ import SwiftUI
     
     var sortState = SortVisualizerState()
 
-        let sortAlgorithms: [SortAlgorithmType: any SortingAlgorithm] = [
-            .bubble: BubbleSort(),
-            .selection: BubbleSort(),
-            .insertion: BubbleSort(),
-            .merge: BubbleSort(),
-            .quick: BubbleSort()
-        ]
+    let sortAlgorithms: [SortAlgorithmType: any SortingAlgorithm] = [
+        .bubble: BubbleSort(),
+        .selection: BubbleSort(),
+        .insertion: BubbleSort(),
+        .merge: BubbleSort(),
+        .quick: BubbleSort()
+    ]
 
-        func startSorting(for algorithm: Algorithm) {
-            guard case .sorting(let type) = algorithm.type else { return }
-            guard !sortState.isSorting else { return }
-            guard let engine = sortAlgorithms[type] else { return }
+    func startSorting(for algorithm: Algorithm) {
+        guard case .sorting(let type) = algorithm.type else { return }
+        guard !sortState.isSorting else { return }
+        guard let engine = sortAlgorithms[type] else { return }
 
-            prepareRun()
+        prepareRun()
 
-            sortState.steps = engine.generateSteps(from: sortState.array)
+        sortState.steps = engine.generateSteps(from: sortState.array)
 
-            runSteps()
-        }
+        runSteps()
+    }
 
-        func resetArray() {
-            sortState.array = getSortArray(difficulty: sortState.difficulty)
-            sortState.currentStep = 0
-            sortState.isSorting = false
-            sortState.highlightedIndices.removeAll()
-            sortState.sortedIndices.removeAll()
-            sortState.steps.removeAll()
-        }
+    func resetArray() {
+        let newArray = getSortArray(difficulty: sortState.difficulty)
+        sortState.array = newArray
+        sortState.currentMaxValue = newArray.max() ?? 1
+        sortState.currentStep = 0
+        sortState.isSorting = false
+        sortState.highlightedIndices.removeAll()
+        sortState.sortedIndices.removeAll()
+        sortState.steps.removeAll()
+    }
 
-        private func prepareRun() {
-            sortState.isSorting = true
-            sortState.currentStep = 0
-            sortState.highlightedIndices.removeAll()
-            sortState.sortedIndices.removeAll()
-        }
+    private func prepareRun() {
+        sortState.isSorting = true
+        sortState.currentStep = 0
+        sortState.highlightedIndices.removeAll()
+        sortState.sortedIndices.removeAll()
+    }
     
     private func runSteps() {
 
@@ -112,6 +114,7 @@ struct SortVisualizerState {
     var difficulty: DifficultyType = .randomCase
     var array: [Int] = []
 
+    var currentMaxValue: Int = 1
     var isSorting = false
     var currentStep = 0
 

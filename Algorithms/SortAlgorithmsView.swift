@@ -27,10 +27,6 @@ struct BarView: View {
 struct SortAlgorithmsView: View {
     @Environment(ViewModel.self) var viewModel: ViewModel
     let algorithm: Algorithm
-
-    var currentMaxValue: Int {
-        max(viewModel.sortState.array.max() ?? 1, 1)
-    }
     
     var body: some View {
         VStack(spacing: 20) {
@@ -47,7 +43,7 @@ struct SortAlgorithmsView: View {
                     ForEach(Array(viewModel.sortState.array.enumerated()), id: \.offset) { index, value in
                         BarView(
                             value: value,
-                            maxValue: currentMaxValue,
+                            maxValue: viewModel.sortState.currentMaxValue,
                             width: max(barWidth, 1),
                             maxHeight: chartHeight,
                             color:
@@ -98,8 +94,7 @@ struct SortAlgorithmsView: View {
 //            }
         }
         .onAppear {
-            viewModel.sortState.array = viewModel.getSortArray(difficulty: .randomCase)
-            viewModel.sortState.difficulty = .randomCase
+            viewModel.resetArray()
         }
         .padding()
     }
