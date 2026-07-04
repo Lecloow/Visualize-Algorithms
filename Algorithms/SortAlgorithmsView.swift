@@ -12,10 +12,11 @@ struct BarView: View {
     let maxValue: Int
     let width: CGFloat
     let maxHeight: CGFloat
+    let color: Color
 
     var body: some View {
         Rectangle()
-            .foregroundColor(.black)
+            .foregroundColor(color)
             .frame(
                 width: width,
                 height: CGFloat(value) / CGFloat(maxValue) * maxHeight
@@ -27,32 +28,32 @@ struct SortAlgorithmsView: View {
     @Environment(ViewModel.self) var viewModel: ViewModel
     let algorithm: Algorithm
 
-    @State private var difficulty: DifficultyType = .sampleCase
-    @State private var array: [Int] = []
-    @State private var isSorting = false
-    @State private var currentStep = 0
-    @State private var steps: [[Int]] = []
-
-    @State var currentMaxValue = 0
+    var currentMaxValue: Int {
+        max(viewModel.sortState.array.max() ?? 1, 1)
+    }
     
     var body: some View {
         VStack(spacing: 20) {
             GeometryReader { geometry in
-                let spacing: CGFloat = array.count > 50 ? 0 : 2
+                let spacing: CGFloat = viewModel.sortState.array.count > 50 ? 0 : 2
                 let chartHeight = geometry.size.height
 
                 let barWidth =
                     (geometry.size.width
-                     - CGFloat(array.count - 1) * spacing)
-                    / CGFloat(array.count)
+                     - CGFloat(viewModel.sortState.array.count - 1) * spacing)
+                / CGFloat(viewModel.sortState.array.count)
 
                 HStack(alignment: .bottom, spacing: spacing) {
-                    ForEach(Array(array.enumerated()), id: \.offset) { _, value in
+                    ForEach(Array(viewModel.sortState.array.enumerated()), id: \.offset) { index, value in
                         BarView(
                             value: value,
                             maxValue: currentMaxValue,
                             width: max(barWidth, 1),
-                            maxHeight: chartHeight
+                            maxHeight: chartHeight,
+                            color:
+                                viewModel.sortState.sortedIndices.contains(index) ? .green :
+                                viewModel.sortState.highlightedIndices.contains(index) ? .blue :
+                                    .black
                         )
                     }
                 }
@@ -65,16 +66,16 @@ struct SortAlgorithmsView: View {
                 .padding()
 
             HStack(spacing: 20) {
-                Button(action: startSorting) {
+                Button(action: { viewModel.startSorting(for: algorithm) }) {
                     Text("Start")
                         .padding()
-                        .background(isSorting ? Color.gray : Color.blue)
+                        .background(viewModel.sortState.isSorting ? Color.gray : Color.blue)
                         .foregroundColor(.white)
                         .cornerRadius(8)
                 }
-                .disabled(isSorting)
+                .disabled(viewModel.sortState.isSorting)
 
-                Button(action: resetArray) {
+                Button(action: viewModel.resetArray) {
                     Text("Reset")
                         .padding()
                         .background(Color.red)
@@ -82,67 +83,27 @@ struct SortAlgorithmsView: View {
                         .cornerRadius(8)
                 }
             }
-            Picker("Difficulty", selection: $difficulty) {
-                Text("Best case").tag(DifficultyType.bestCase)
-                Text("Worst case").tag(DifficultyType.worstCase)
-                Text("Random case").tag(DifficultyType.randomCase)
-                Text("Sample case").tag(DifficultyType.sampleCase)
-            }
-            .onChange(of: difficulty) { _, newValue in
-                array = viewModel.getSortArray(difficulty: newValue)
-                currentMaxValue = array.max() ?? 1
-            }
+//            Picker("Difficulty", selection: $viewModel.sortState.difficulty) {
+//                Text("Best case").tag(DifficultyType.bestCase)
+//                Text("Worst case").tag(DifficultyType.worstCase)
+//                Text("Random case").tag(DifficultyType.randomCase)
+//                Text("Sample case").tag(DifficultyType.sampleCase)
+//            }
+//            .onChange(of: viewModel.sortState.difficulty) { _, newValue in
+//                viewModel.sortState.array =
+//                    viewModel.getSortArray(difficulty: newValue)
+//
+//                viewModel.sortState.sortedIndices.removeAll()
+//                viewModel.sortState.highlightedIndices.removeAll()
+//            }
         }
         .onAppear {
-            array = viewModel.getSortArray(difficulty: .sampleCase)
-            currentMaxValue = array.max() ?? 1
+            viewModel.sortState.array = viewModel.getSortArray(difficulty: .randomCase)
+            viewModel.sortState.difficulty = .randomCase
         }
         .padding()
     }
 
-    private func generateBubbleSortSteps() {
-        var tempArray = array
 
-        steps = [tempArray]
 
-        for i in 0..<tempArray.count {
-            for j in 0..<(tempArray.count - i - 1) {
-                if tempArray[j] > tempArray[j + 1] {
-                    tempArray.swapAt(j, j + 1)
-                    steps.append(tempArray)
-                }
-            }
-        }
-    }
-
-    private func startSorting() {
-        isSorting = true
-        currentStep = 0
-        steps = []
-        generateBubbleSortSteps()
-
-        Timer.scheduledTimer(withTimeInterval: 0.0, repeats: true) { [self] timer in
-            guard currentStep < steps.count else {
-                timer.invalidate()
-                isSorting = false
-                return
-            }
-            withAnimation(.easeInOut(duration: 0.1)) {
-                array = steps[currentStep]
-            }
-            currentStep += 1
-        }
-    }
-
-    private func resetArray() {
-        array = viewModel.getSortArray(difficulty: difficulty)
-        isSorting = false
-        currentStep = 0
-    }
-}
-
-struct SortStep {
-    let array: [Int]
-    let comparedIndices: (Int, Int)?
-    let swapped: Bool
 }
