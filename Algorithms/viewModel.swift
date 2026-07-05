@@ -19,16 +19,18 @@ import SwiftUI
         model.algorithms
     }
     
-    func getSortArray(difficulty: DifficultyType, size: Int = 100) -> [Int] {
+    func getSortArray(difficulty: DifficultyType, size: Int = 100) {
+        sortState.sortedIndices.removeAll()
+        sortState.highlightedIndices.removeAll()
         switch difficulty {
         case .bestCase:
-            return Array(1...size)
+            sortState.array = Array(1...size)
         case .worstCase:
-            return Array((1...size).reversed())
+            sortState.array = Array((1...size).reversed())
         case .randomCase:
-            return Array(1...size).shuffled()
+            sortState.array = Array(1...size).shuffled()
         case .sampleCase:
-            return [5, 3, 8, 1, 9, 2, 7, 4, 6, 10]
+            sortState.array = [5, 3, 8, 1, 9, 2, 7, 4, 6, 10]
         }
     }
     
@@ -55,9 +57,8 @@ import SwiftUI
     }
 
     func resetArray() {
-        let newArray = getSortArray(difficulty: sortState.difficulty)
-        sortState.array = newArray
-        sortState.currentMaxValue = newArray.max() ?? 1
+        getSortArray(difficulty: sortState.difficulty)
+        sortState.currentMaxValue = sortState.array.max() ?? 1
         sortState.currentStep = 0
         sortState.isSorting = false
         sortState.highlightedIndices.removeAll()
@@ -98,7 +99,9 @@ import SwiftUI
 
                 sortState.currentStep += 1
 
-                try? await Task.sleep(nanoseconds: 5_000_000) // 0.005s
+//                try? await Task.sleep(nanoseconds: 1_000_000) // 0.005s
+                try? await Task.sleep(nanoseconds: 2_000) // 2000ns
+
             }
 
             sortState.isSorting = false

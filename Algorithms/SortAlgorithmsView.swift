@@ -29,6 +29,8 @@ struct SortAlgorithmsView: View {
     let algorithm: Algorithm
     
     var body: some View {
+        @Bindable var vm = viewModel
+
         VStack(spacing: 20) {
             GeometryReader { geometry in
                 let spacing: CGFloat = viewModel.sortState.array.count > 50 ? 0 : 2
@@ -79,19 +81,16 @@ struct SortAlgorithmsView: View {
                         .cornerRadius(8)
                 }
             }
-//            Picker("Difficulty", selection: $viewModel.sortState.difficulty) {
-//                Text("Best case").tag(DifficultyType.bestCase)
-//                Text("Worst case").tag(DifficultyType.worstCase)
-//                Text("Random case").tag(DifficultyType.randomCase)
-//                Text("Sample case").tag(DifficultyType.sampleCase)
-//            }
-//            .onChange(of: viewModel.sortState.difficulty) { _, newValue in
-//                viewModel.sortState.array =
-//                    viewModel.getSortArray(difficulty: newValue)
-//
-//                viewModel.sortState.sortedIndices.removeAll()
-//                viewModel.sortState.highlightedIndices.removeAll()
-//            }
+          
+            Picker("Difficulty", selection: $vm.sortState.difficulty) {
+                ForEach(DifficultyType.allCases) { difficulty in
+                    Text(difficulty.rawValue)
+                        .tag(difficulty)
+                }
+            }
+            .onChange(of: viewModel.sortState.difficulty) {
+                viewModel.resetArray()
+            }
         }
         .onAppear {
             viewModel.resetArray()

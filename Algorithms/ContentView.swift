@@ -17,15 +17,21 @@ struct ContentView: View {
         else {
             TabView {
                 Tab("Home", systemImage: "house.fill") {
-                    HomeView()
+                    NavigationStack {
+                        HomeView()
+                    }
                 }
                 
                 Tab("Settings", systemImage: "gear") {
-                    SettingsView()
+                    NavigationStack {
+                        SettingsView()
+                    }
                 }
                 
                 Tab("Search", systemImage: "magnifyingglass", role: .search) {
-                    SearchView()
+                    NavigationStack {
+                        SearchView()
+                    }
                 }
             }
         }

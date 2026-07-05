@@ -7,11 +7,11 @@
 
 import Foundation
 
-enum DifficultyType: CaseIterable, Identifiable {
-    case bestCase
-    case worstCase
-    case randomCase
-    case sampleCase
+enum DifficultyType: String, CaseIterable, Identifiable {
+    case bestCase = "best case"
+    case worstCase = "worst case"
+    case randomCase = "random case"
+    case sampleCase = "sample case"
 
     var id: Self { self }
 }
@@ -27,6 +27,25 @@ enum AlgorithmType {
     case sorting(SortAlgorithmType)
     case searching(SearchAlgorithmType)
     case graph(GraphAlgorithmType)
+
+    var family: AlgorithmCategory {
+        switch self {
+        case .sorting:
+            return .sorting
+        case .searching:
+            return .searching
+        case .graph:
+            return .graph
+        }
+    }
+}
+
+enum AlgorithmCategory: String, CaseIterable, Identifiable {
+    case sorting = "Sorting"
+    case searching = "Searching"
+    case graph = "Graph"
+
+    var id: Self { self }
 }
 
 enum SortAlgorithmType: String, CaseIterable, Identifiable {
@@ -58,7 +77,7 @@ struct Model {
     init() {
         algorithms = [
             Algorithm(title: "Binary Search", description: "Divide and conquer...", type: .searching(.binarySearch),),
-            Algorithm(title: "Quick Sort", description: "Efficient sorting algorithm...", type: .sorting(.bubble)),
+            Algorithm(title: "Bubble Sort", description: "Efficient sorting algorithm...", type: .sorting(.bubble)),
             Algorithm(title: "Dijkstra", description: "Shortest path algorithm...", type: .graph(.dijkstra))
         ]
     }
