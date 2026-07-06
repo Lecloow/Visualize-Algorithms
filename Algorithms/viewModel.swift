@@ -80,27 +80,46 @@ import SwiftUI
             while sortState.isSorting &&
                   sortState.currentStep < sortState.steps.count {
 
-                let step = sortState.steps[sortState.currentStep]
-
-                switch step.action {
-
-                case let .compare(i, j):
-                    sortState.highlightedIndices = [i, j]
-
-                case let .swap(i, j):
-                    sortState.array.swapAt(i, j)
-
-                case let .overwrite(index, value):
-                    sortState.array[index] = value
-
-                case let .markSorted(index):
-                    sortState.sortedIndices.insert(index)
+//                let step = sortState.steps[sortState.currentStep]
+//
+//                switch step.action {
+//
+//                case let .compare(i, j):
+//                    sortState.highlightedIndices = [i, j]
+//
+//                case let .swap(i, j):
+//                    sortState.array.swapAt(i, j)
+//
+//                case let .overwrite(index, value):
+//                    sortState.array[index] = value
+//
+//                case let .markSorted(index):
+//                    sortState.sortedIndices.insert(index)
+//                }
+//
+//                sortState.currentStep += 1
+                
+                // Batch process: Execute up to 5 steps per frame to keep UI fluid
+                // but reduce update frequency
+                for _ in 0..<25 {
+                    guard sortState.currentStep < sortState.steps.count else { break }
+                    
+                    let step = sortState.steps[sortState.currentStep]
+                    switch step.action {
+                    case let .compare(i, j):
+                        sortState.highlightedIndices = [i, j]
+                    case let .swap(i, j):
+                        sortState.array.swapAt(i, j)
+                    case let .overwrite(index, value):
+                        sortState.array[index] = value
+                    case let .markSorted(index):
+                        sortState.sortedIndices.insert(index)
+                    }
+                    sortState.currentStep += 1
                 }
 
-                sortState.currentStep += 1
-
-//                try? await Task.sleep(nanoseconds: 1_000_000) // 0.005s
-                try? await Task.sleep(nanoseconds: 2_000) // 2000ns
+                try? await Task.sleep(nanoseconds: 16_000_000)
+                // try? await Task.sleep(nanoseconds: 2_000) // 2000ns
 
             }
 

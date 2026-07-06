@@ -31,39 +31,37 @@ struct SortAlgorithmsView: View {
     
     var body: some View {
         @Bindable var vm = viewModel
-
+        
         VStack(spacing: 20) {
             GeometryReader { geometry in
-                let spacing: CGFloat = viewModel.sortState.array.count > 50 ? 0 : 2
-                let chartHeight = geometry.size.height
-
-                let barWidth =
-                    (geometry.size.width
-                     - CGFloat(viewModel.sortState.array.count - 1) * spacing)
-                / CGFloat(viewModel.sortState.array.count)
-
-                HStack(alignment: .bottom, spacing: spacing) {
-                    ForEach(Array(viewModel.sortState.array.enumerated()), id: \.offset) { index, value in
-                        BarView(
-                            value: value,
-                            maxValue: viewModel.sortState.currentMaxValue,
-                            width: max(barWidth, 1),
-                            maxHeight: chartHeight,
-                            color:
-                                viewModel.sortState.sortedIndices.contains(index) ? .green :
-                                viewModel.sortState.highlightedIndices.contains(index) ? .blue :
-                                    .black
-                        )
+                let spacing: CGFloat = 0//viewModel.sortState.array.count > 50 ? 0 : 2
+                let totalWidth = geometry.size.width
+                let count = viewModel.sortState.array.count
+                let barWidth = (totalWidth - CGFloat(max(0, count - 1)) * spacing) / CGFloat(max(1, count))
+                
+                Canvas { context, size in
+                    for index in 0..<count {
+                        let value = viewModel.sortState.array[index]
+                        let xPos = CGFloat(index) * (barWidth)
+                        let barHeight = CGFloat(value) / CGFloat(viewModel.sortState.currentMaxValue) * size.height
+                        
+                        let rect = CGRect(x: xPos, y: size.height - barHeight, width: barWidth, height: barHeight)
+                        
+                        let color: Color = viewModel.sortState.sortedIndices.contains(index) ? .green :
+                        viewModel.sortState.highlightedIndices.contains(index) ? .blue :
+                            .black
+                        
+                        context.fill(Path(rect), with: .color(color))
                     }
                 }
             }
-
+            
             Spacer()
             Text(algorithm.title)
                 .font(.largeTitle)
             Text(algorithm.description)
                 .padding()
-
+            
             HStack(spacing: 20) {
                 Button(action: { viewModel.startSorting(for: algorithm) }) {
                     Text("Start")
@@ -73,7 +71,7 @@ struct SortAlgorithmsView: View {
                         .cornerRadius(8)
                 }
                 .disabled(viewModel.sortState.isSorting)
-
+                
                 Button(action: viewModel.resetArray) {
                     Text("Reset")
                         .padding()
@@ -82,7 +80,7 @@ struct SortAlgorithmsView: View {
                         .cornerRadius(8)
                 }
             }
-          
+            
             Picker("Difficulty", selection: $vm.sortState.difficulty) {
                 ForEach(DifficultyType.allCases) { difficulty in
                     Text(difficulty.rawValue)
@@ -108,7 +106,4 @@ struct SortAlgorithmsView: View {
         }
         .padding()
     }
-
-
-
 }
