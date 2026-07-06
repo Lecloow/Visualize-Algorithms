@@ -27,6 +27,7 @@ struct BarView: View {
 struct SortAlgorithmsView: View {
     @Environment(ViewModel.self) var viewModel: ViewModel
     let algorithm: Algorithm
+    @State var showLearnMoreSheet = false
     
     var body: some View {
         @Bindable var vm = viewModel
@@ -91,6 +92,16 @@ struct SortAlgorithmsView: View {
             .onChange(of: viewModel.sortState.difficulty) {
                 viewModel.resetArray()
             }
+        }
+        .toolbar {
+            ToolbarItem {
+                Button("Learn more", systemImage: "questionmark") {
+                    showLearnMoreSheet = true
+                }
+            }
+        }
+        .sheet(isPresented: $showLearnMoreSheet) {
+            Text(algorithm.description)
         }
         .onAppear {
             viewModel.resetArray()
