@@ -50,10 +50,9 @@ import SwiftUI
         guard let engine = sortAlgorithms[type] else { return }
         
         prepareRun()
-        
-        sortState.steps = engine.generateSteps(from: sortState.array)
+        let stream = engine.generateSteps(from: sortState.array)
+        runSteps(with: stream, speed: speed)
 
-        runSteps(speed)
     }
     
     func resetArray() {
@@ -83,30 +82,61 @@ import SwiftUI
         sortState.sortedIndices.removeAll()
     }
     
-    private func runSteps(_ speed: Double) {
-
+//    private func runSteps(with stream: AsyncStream<SortStep>, speed: Double) {
+//
+//        Task { @MainActor in
+//            
+//            while sortState.isSorting && sortState.currentStep < sortState.steps.count {
+//                for _ in 0..<Int((25 * speed).rounded()) {
+//                    guard sortState.currentStep < sortState.steps.count else { break }
+//                    
+//                    let step = sortState.steps[sortState.currentStep]
+//                    switch step.action {
+//                    case let .compare(i, j):
+//                        sortState.highlightedIndices = [i, j]
+//                    case let .swap(i, j):
+//                        sortState.array.swapAt(i, j)
+//                    case let .overwrite(index, value):
+//                        sortState.array[index] = value
+//                    case let .markSorted(index):
+//                        sortState.sortedIndices.insert(index)
+//                    }
+//                    sortState.currentStep += 1
+//                
+//                }
+//                try? await Task.sleep(nanoseconds: UInt64(16000000*(1/speed)))
+//
+//            }
+//            sortState.isSorting = false
+//            sortState.highlightedIndices.removeAll()
+//        }
+//    }
+    private func runSteps(with stream: AsyncStream<SortStep>, speed: Double) {
         Task { @MainActor in
-            
-            while sortState.isSorting && sortState.currentStep < sortState.steps.count {
-                for _ in 0..<Int((25 * speed).rounded()) {
-                    guard sortState.currentStep < sortState.steps.count else { break }
-                    
-                    let step = sortState.steps[sortState.currentStep]
-                    switch step.action {
-                    case let .compare(i, j):
-                        sortState.highlightedIndices = [i, j]
-                    case let .swap(i, j):
-                        sortState.array.swapAt(i, j)
-                    case let .overwrite(index, value):
-                        sortState.array[index] = value
-                    case let .markSorted(index):
-                        sortState.sortedIndices.insert(index)
-                    }
-                    sortState.currentStep += 1
-                
-                }
-                try? await Task.sleep(nanoseconds: UInt64(16000000*(1/speed)))
+            var stepsProcessedInFrame = 0
+            let batchSize = max(1, Int((5.0 * speed).rounded()))
 
+            for await step in stream {
+                switch step.action {
+                case let .compare(i, j):
+                    sortState.highlightedIndices = [i, j]
+                case let .swap(i, j):
+                    sortState.array.swapAt(i, j)
+                case let .overwrite(index, value):
+                    sortState.array[index] = value
+                case let .markSorted(index):
+                    sortState.sortedIndices.insert(index)
+                }
+
+                stepsProcessedInFrame += 1
+
+                if stepsProcessedInFrame >= batchSize {
+                    stepsProcessedInFrame = 0
+                    // Only ONE sleep call per frame.
+                    // Speed 1.0 = 16ms, Speed 2.0 = 8ms, etc.
+                    let sleepTime = UInt64(16_000_000 / speed)
+                    try? await Task.sleep(nanoseconds: sleepTime)
+                }
             }
             sortState.isSorting = false
             sortState.highlightedIndices.removeAll()
