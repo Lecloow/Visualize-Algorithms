@@ -1,19 +1,20 @@
 //
-//  AlgorithmView.swift
+//  ExplanationAlgorithmView.swift
 //  Algorithms
 //
-//  Created by Thomas Conchon on 6/30/26.
+//  Created by Thomas Conchon on 7/6/26.
 //
 
 import SwiftUI
 
-struct AlgorithmView: View {
+struct ExplanationAlgorithmView: View {
     let algorithm: Algorithm
-
+    let speed = 0.05
+    
     var body: some View {
         switch algorithm.type {
         case .sorting:
-            SortAlgorithmsView(algorithm: algorithm)
+            ExplanationSortAlgorithmView(algorithm: algorithm, speed: speed)
         case .searching:
             Text("Algorithm unsupported for the moment")
         case .graph:
@@ -21,7 +22,3 @@ struct AlgorithmView: View {
         }
     }
 }
-
-//#Preview {
-//    AlgorithmView()
-//}

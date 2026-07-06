@@ -7,20 +7,32 @@
 
 import SwiftUI
 
-struct BarView: View {
-    let value: Int
-    let maxValue: Int
-    let width: CGFloat
-    let maxHeight: CGFloat
-    let color: Color
-
+struct sortCanvasView: View {
+    @Environment(ViewModel.self) var viewModel: ViewModel
+    
     var body: some View {
-        Rectangle()
-            .foregroundColor(color)
-            .frame(
-                width: width,
-                height: CGFloat(value) / CGFloat(maxValue) * maxHeight
-            )
+        GeometryReader { geometry in
+            let spacing: CGFloat = 0//viewModel.sortState.array.count > 50 ? 0 : 2
+            let totalWidth = geometry.size.width
+            let count = viewModel.sortState.array.count
+            let barWidth = (totalWidth - CGFloat(max(0, count - 1)) * spacing) / CGFloat(max(1, count))
+            
+            Canvas { context, size in
+                for index in 0..<count {
+                    let value = viewModel.sortState.array[index]
+                    let xPos = CGFloat(index) * (barWidth)
+                    let barHeight = CGFloat(value) / CGFloat(viewModel.sortState.currentMaxValue) * size.height
+                    
+                    let rect = CGRect(x: xPos, y: size.height - barHeight, width: barWidth, height: barHeight)
+                    
+                    let color: Color = viewModel.sortState.sortedIndices.contains(index) ? .green :
+                    viewModel.sortState.highlightedIndices.contains(index) ? .blue :
+                        .black
+                    
+                    context.fill(Path(rect), with: .color(color))
+                }
+            }
+        }
     }
 }
 
@@ -33,28 +45,7 @@ struct SortAlgorithmsView: View {
         @Bindable var vm = viewModel
         
         VStack(spacing: 20) {
-            GeometryReader { geometry in
-                let spacing: CGFloat = 0//viewModel.sortState.array.count > 50 ? 0 : 2
-                let totalWidth = geometry.size.width
-                let count = viewModel.sortState.array.count
-                let barWidth = (totalWidth - CGFloat(max(0, count - 1)) * spacing) / CGFloat(max(1, count))
-                
-                Canvas { context, size in
-                    for index in 0..<count {
-                        let value = viewModel.sortState.array[index]
-                        let xPos = CGFloat(index) * (barWidth)
-                        let barHeight = CGFloat(value) / CGFloat(viewModel.sortState.currentMaxValue) * size.height
-                        
-                        let rect = CGRect(x: xPos, y: size.height - barHeight, width: barWidth, height: barHeight)
-                        
-                        let color: Color = viewModel.sortState.sortedIndices.contains(index) ? .green :
-                        viewModel.sortState.highlightedIndices.contains(index) ? .blue :
-                            .black
-                        
-                        context.fill(Path(rect), with: .color(color))
-                    }
-                }
-            }
+            sortCanvasView()
             
             Spacer()
             Text(algorithm.title)
@@ -99,7 +90,7 @@ struct SortAlgorithmsView: View {
             }
         }
         .sheet(isPresented: $showLearnMoreSheet) {
-            Text(algorithm.description)
+            ExplanationAlgorithmView(algorithm: algorithm)
         }
         .onAppear {
             viewModel.resetArray()
@@ -107,3 +98,4 @@ struct SortAlgorithmsView: View {
         .padding()
     }
 }
+

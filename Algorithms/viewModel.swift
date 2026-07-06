@@ -44,22 +44,30 @@ import SwiftUI
         .quick: BubbleSort()
     ]
     
-    func startSorting(for algorithm: Algorithm) {
+    func startSorting(for algorithm: Algorithm, speed: Double = 1) {
         guard case .sorting(let type) = algorithm.type else { return }
         guard !sortState.isSorting else { return }
         guard let engine = sortAlgorithms[type] else { return }
         
         prepareRun()
         
-        //        sortState.steps = engine.generateSteps(from: sortState.array)
-        let stream = engine.generateSteps(from: sortState.array)
-        runSteps(with: stream)
-        
-        //        runSteps()
+        sortState.steps = engine.generateSteps(from: sortState.array)
+
+        runSteps(speed)
     }
     
     func resetArray() {
         getSortArray(difficulty: sortState.difficulty)
+        sortState.currentMaxValue = sortState.array.max() ?? 1
+        sortState.currentStep = 0
+        sortState.isSorting = false
+        sortState.highlightedIndices.removeAll()
+        sortState.sortedIndices.removeAll()
+        sortState.steps.removeAll()
+    }
+    
+    func sampleCase() {
+        getSortArray(difficulty: .sampleCase)
         sortState.currentMaxValue = sortState.array.max() ?? 1
         sortState.currentStep = 0
         sortState.isSorting = false
@@ -75,14 +83,15 @@ import SwiftUI
         sortState.sortedIndices.removeAll()
     }
     
-    private func runSteps(with stream: AsyncStream<SortStep>) {
-        
+    private func runSteps(_ speed: Double) {
+
         Task { @MainActor in
             
-                
-                var stepsProcessedInFrame = 0
-                
-                for await step in stream {
+            while sortState.isSorting && sortState.currentStep < sortState.steps.count {
+                for _ in 0..<Int((25 * speed).rounded()) {
+                    guard sortState.currentStep < sortState.steps.count else { break }
+                    
+                    let step = sortState.steps[sortState.currentStep]
                     switch step.action {
                     case let .compare(i, j):
                         sortState.highlightedIndices = [i, j]
@@ -92,19 +101,15 @@ import SwiftUI
                         sortState.array[index] = value
                     case let .markSorted(index):
                         sortState.sortedIndices.insert(index)
-            }
-                    
-                    stepsProcessedInFrame += 1
-                    
-                    // Batch process 5 steps before yielding to the UI
-                    if stepsProcessedInFrame >= 25 {
-                        stepsProcessedInFrame = 0
-                        try? await Task.sleep(nanoseconds: 16_000_000) // 60 FPS
                     }
-                    
+                    sortState.currentStep += 1
+                
                 }
-                sortState.isSorting = false
-                sortState.highlightedIndices.removeAll()
+                try? await Task.sleep(nanoseconds: UInt64(16000000*(1/speed)))
+
+            }
+            sortState.isSorting = false
+            sortState.highlightedIndices.removeAll()
         }
     }
 }
