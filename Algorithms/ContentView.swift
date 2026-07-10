@@ -22,6 +22,12 @@ struct ContentView: View {
                     }
                 }
                 
+                Tab("Bench", systemImage: "dumbbell.fill") {
+                    NavigationStack {
+                        BenchView()
+                    }
+                }
+                
                 Tab("Settings", systemImage: "gear") {
                     NavigationStack {
                         SettingsView()

@@ -85,15 +85,11 @@ struct Model {
     
 }
 
-enum SortAction {
+enum SortStep {
     case compare(Int, Int)
     case swap(Int, Int)
     case overwrite(Int, Int)
     case markSorted(Int)
-}
-
-struct SortStep {
-    let action: SortAction
 }
 
 protocol SortingAlgorithm {

@@ -12,18 +12,24 @@ struct sortCanvasView: View {
     
     var body: some View {
         GeometryReader { geometry in
-            let spacing: CGFloat = 0//viewModel.sortState.array.count > 50 ? 0 : 2
             let totalWidth = geometry.size.width
             let count = viewModel.sortState.array.count
-            let barWidth = (totalWidth - CGFloat(max(0, count - 1)) * spacing) / CGFloat(max(1, count))
+            let barWidth = totalWidth / CGFloat(count)
             
             Canvas { context, size in
                 for index in 0..<count {
                     let value = viewModel.sortState.array[index]
-                    let xPos = CGFloat(index) * (barWidth)
-                    let barHeight = CGFloat(value) / CGFloat(viewModel.sortState.currentMaxValue) * size.height
+                    let xPos = floor(CGFloat(index) * barWidth)
+                    let nextXPos = floor(CGFloat(index + 1) * barWidth)
+                    let width = nextXPos - xPos // To avoid little space between bar (bc the pos is rounded so sometimes there is a 1 px gap)
+                    let barHeight = (CGFloat(value) / CGFloat(viewModel.sortState.currentMaxValue)) * size.height
                     
-                    let rect = CGRect(x: xPos, y: size.height - barHeight, width: barWidth, height: barHeight)
+                    let rect = CGRect(
+                        x: xPos,
+                        y: size.height - barHeight,
+                        width: width,
+                        height: barHeight
+                    )
                     
                     let color: Color = viewModel.sortState.sortedIndices.contains(index) ? .green :
                     viewModel.sortState.highlightedIndices.contains(index) ? .blue :
@@ -56,20 +62,17 @@ struct SortAlgorithmsView: View {
             HStack(spacing: 20) {
                 Button(action: { viewModel.startSorting(for: algorithm) }) {
                     Text("Start")
-                        .padding()
-                        .background(viewModel.sortState.isSorting ? Color.gray : Color.blue)
-                        .foregroundColor(.white)
-                        .cornerRadius(8)
                 }
+                .buttonStyle(.glassProminent)
+                .tint(viewModel.sortState.isSorting ? Color.gray : Color.blue)
                 .disabled(viewModel.sortState.isSorting)
                 
                 Button(action: viewModel.resetArray) {
                     Text("Reset")
-                        .padding()
-                        .background(Color.red)
-                        .foregroundColor(.white)
-                        .cornerRadius(8)
+                    
                 }
+                .buttonStyle(.glassProminent)
+                .tint(.red)
             }
             
             Picker("Difficulty", selection: $vm.sortState.difficulty) {

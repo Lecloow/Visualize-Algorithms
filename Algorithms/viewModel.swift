@@ -18,6 +18,7 @@ import SwiftUI
     var algorithms: [Algorithm] {
         model.algorithms
     }
+    var selection: Set<Algorithm.ID> = []
     
     func getSortArray(difficulty: DifficultyType, size: Int = 100) {
         sortState.sortedIndices.removeAll()
@@ -92,7 +93,7 @@ import SwiftUI
                     break
                 }
 
-                switch step.action {
+                switch step {
                 case let .compare(i, j):
                     sortState.highlightedIndices = [i, j]
                 case let .swap(i, j):
