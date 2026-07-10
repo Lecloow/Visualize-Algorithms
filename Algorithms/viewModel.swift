@@ -68,11 +68,11 @@ import SwiftUI
     }
     
     func sampleCase() {
+        sortState.isSorting = false
         sortState.sample = true
         getSortArray(difficulty: .sampleCase)
         sortState.currentMaxValue = sortState.array.max() ?? 1
         sortState.currentStep = 0
-        sortState.isSorting = false
         sortState.highlightedIndices.removeAll()
         sortState.sortedIndices.removeAll()
         sortState.steps.removeAll()
@@ -88,12 +88,13 @@ import SwiftUI
     private func runSteps(with stream: AsyncStream<SortStep>) {
         Task { @MainActor in
             var stepsProcessedInFrame = 0
-            var speed = sortState.sample ? sortState.sampleSpeed : sortState.speed
+            let sample = sortState.sample
+            var speed = sample ? sortState.sampleSpeed : sortState.speed
             var batchSize = max(1, Int((5.0 * speed).rounded()))
 
             for await step in stream {
-                if speed != (sortState.sample ? sortState.sampleSpeed : sortState.speed) {
-                    speed = sortState.sample ? sortState.sampleSpeed : sortState.speed
+                if speed != (sample ? sortState.sampleSpeed : sortState.speed) {
+                    speed = sample ? sortState.sampleSpeed : sortState.speed
                     batchSize = max(1, Int((5.0 * speed).rounded()))
                 }
                 
