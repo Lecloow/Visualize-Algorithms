@@ -45,19 +45,20 @@ import SwiftUI
         .quick: BubbleSort()
     ]
     
-    func startSorting(for algorithm: Algorithm, speed: Double = 1) {
+    func startSorting(for algorithm: Algorithm) {
         guard case .sorting(let type) = algorithm.type else { return }
         guard !sortState.isSorting else { return }
         guard let engine = sortAlgorithms[type] else { return }
         
         prepareRun()
         let stream = engine.generateSteps(from: sortState.array)
-        runSteps(with: stream, speed: speed)
+        runSteps(with: stream)
 
     }
     
     func resetArray() {
         getSortArray(difficulty: sortState.difficulty)
+        sortState.sample = false
         sortState.currentMaxValue = sortState.array.max() ?? 1
         sortState.currentStep = 0
         sortState.isSorting = false
@@ -67,6 +68,7 @@ import SwiftUI
     }
     
     func sampleCase() {
+        sortState.sample = true
         getSortArray(difficulty: .sampleCase)
         sortState.currentMaxValue = sortState.array.max() ?? 1
         sortState.currentStep = 0
@@ -83,15 +85,19 @@ import SwiftUI
         sortState.sortedIndices.removeAll()
     }
     
-    private func runSteps(with stream: AsyncStream<SortStep>, speed: Double) {
+    private func runSteps(with stream: AsyncStream<SortStep>) {
         Task { @MainActor in
             var stepsProcessedInFrame = 0
-            let batchSize = max(1, Int((5.0 * speed).rounded()))
+            var speed = sortState.sample ? sortState.sampleSpeed : sortState.speed
+            var batchSize = max(1, Int((5.0 * speed).rounded()))
 
             for await step in stream {
-                if !sortState.isSorting {
-                    break
+                if speed != (sortState.sample ? sortState.sampleSpeed : sortState.speed) {
+                    speed = sortState.sample ? sortState.sampleSpeed : sortState.speed
+                    batchSize = max(1, Int((5.0 * speed).rounded()))
                 }
+                
+                if !sortState.isSorting { break }
 
                 switch step {
                 case let .compare(i, j):
@@ -122,6 +128,9 @@ import SwiftUI
 struct SortVisualizerState {
 
     var algorithmType: SortAlgorithmType = .bubble
+    var speed = 1.0
+    var sampleSpeed = 0.1
+    var sample = false
 
     var difficulty: DifficultyType = .randomCase
     var array: [Int] = []

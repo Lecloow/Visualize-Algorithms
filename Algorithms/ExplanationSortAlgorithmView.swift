@@ -10,7 +10,6 @@ import SwiftUI
 struct ExplanationSortAlgorithmView: View {
     @Environment(ViewModel.self) var viewModel: ViewModel
     let algorithm: Algorithm
-    let speed: Double
     
     var body: some View {
         VStack {
@@ -23,13 +22,16 @@ struct ExplanationSortAlgorithmView: View {
                 .tint(viewModel.sortState.isSorting ? Color.gray : Color.blue)
                 .disabled(viewModel.sortState.isSorting)
                 
-                Button(action: viewModel.resetArray) {
+                Button(action: viewModel.sampleCase) {
                     Text("Reset")
                     
                 }
                 .buttonStyle(.glassProminent)
                 .tint(.red)
             }
+        }
+        .onDisappear {
+            viewModel.resetArray()
         }
         .onAppear {
             viewModel.sampleCase()

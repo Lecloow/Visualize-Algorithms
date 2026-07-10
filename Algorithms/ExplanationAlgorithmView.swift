@@ -9,12 +9,11 @@ import SwiftUI
 
 struct ExplanationAlgorithmView: View {
     let algorithm: Algorithm
-    let speed = 0.1
     
     var body: some View {
         switch algorithm.type {
         case .sorting:
-            ExplanationSortAlgorithmView(algorithm: algorithm, speed: speed)
+            ExplanationSortAlgorithmView(algorithm: algorithm)
         case .searching:
             Text("Algorithm unsupported for the moment")
         case .graph:
