@@ -15,20 +15,22 @@ struct ExplanationSortAlgorithmView: View {
     var body: some View {
         VStack {
             sortCanvasView()
-            Button(action: { viewModel.startSorting(for: algorithm, speed: speed) }) {
-                Text("Start")
-                    .padding()
-                    .background(viewModel.sortState.isSorting ? Color.gray : Color.blue)
-                    .foregroundColor(.white)
-                    .cornerRadius(8)
-            }
-            .disabled(viewModel.sortState.isSorting)
-            Button(action: viewModel.sampleCase) {
-                Text("Reset")
-                    .padding()
-                    .background(Color.red)
-                    .foregroundColor(.white)
-                    .cornerRadius(8)
+            HStack {
+                Button(action: { viewModel.startSorting(for: algorithm, speed: speed) }) {
+                    Text("Start")
+                        .padding()
+                        .background(viewModel.sortState.isSorting ? Color.gray : Color.blue)
+                        .foregroundColor(.white)
+                        .cornerRadius(8)
+                }
+                .disabled(viewModel.sortState.isSorting)
+                Button(action: viewModel.sampleCase) {
+                    Text("Reset")
+                        .padding()
+                        .background(Color.red)
+                        .foregroundColor(.white)
+                        .cornerRadius(8)
+                }
             }
         }
         .onAppear {

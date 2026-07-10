@@ -9,7 +9,7 @@ import SwiftUI
 
 struct ExplanationAlgorithmView: View {
     let algorithm: Algorithm
-    let speed = 0.05
+    let speed = 0.1
     
     var body: some View {
         switch algorithm.type {

@@ -76,8 +76,9 @@ struct Model {
     
     init() {
         algorithms = [
-            Algorithm(title: "Binary Search", description: "Divide and conquer...", type: .searching(.binarySearch),),
             Algorithm(title: "Bubble Sort", description: "Efficient sorting algorithm...", type: .sorting(.bubble)),
+            Algorithm(title: "Insertion Sort", description: "Efficient sorting algorithm...", type: .sorting(.insertion)),
+            Algorithm(title: "Binary Search", description: "Divide and conquer...", type: .searching(.binarySearch),),
             Algorithm(title: "Dijkstra", description: "Shortest path algorithm...", type: .graph(.dijkstra))
         ]
     }
@@ -103,64 +104,4 @@ protocol SortingAlgorithm {
     
     // For benchmarking
     func sort(_ array: [Int]) -> [Int]
-}
-
-struct BubbleSort: SortingAlgorithm {
-
-    let name = "Bubble Sort"
-    
-//    func generateSteps(from array: [Int]) -> [SortStep] {
-//            var tempArray = array
-//            var steps: [SortStep] = []
-//
-//            for i in 0..<tempArray.count {
-//                for j in 0..<(tempArray.count - i - 1) {
-//
-//                    steps.append(
-//                        SortStep(action: .compare(j, j + 1))
-//                    )
-//
-//                    if tempArray[j] > tempArray[j + 1] {
-//
-//                        tempArray.swapAt(j, j + 1)
-//
-//                        steps.append(
-//                            SortStep(action: .swap(j, j + 1))
-//                        )
-//                    }
-//                }
-//                    steps.append(SortStep(action: .markSorted(tempArray.count - i - 1)))
-//            }
-//            return steps
-//        }
-
-    func generateSteps(from array: [Int]) -> AsyncStream<SortStep> {
-        AsyncStream { continuation in
-            var tempArray = array
-            for i in 0..<tempArray.count {
-                for j in 0..<(tempArray.count - i - 1) {
-                    continuation.yield(SortStep(action: .compare(j, j + 1)))
-                    if tempArray[j] > tempArray[j + 1] {
-                        tempArray.swapAt(j, j + 1)
-                        continuation.yield(SortStep(action: .swap(j, j + 1)))
-                    }
-                }
-                continuation.yield(SortStep(action: .markSorted(tempArray.count - i - 1)))
-            }
-            continuation.finish()
-        }
-    }
-    
-    func sort(_ array: [Int]) -> [Int] {
-        var tempArray = array
-        for i in 0..<tempArray.count {
-            for j in 0..<(tempArray.count - i - 1) {
-                if tempArray[j] > tempArray[j + 1] {
-                    tempArray.swapAt(j, j + 1)
-                }
-            }
-        }
-        return tempArray
-    }
-    
 }
