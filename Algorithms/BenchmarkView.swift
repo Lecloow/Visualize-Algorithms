@@ -10,23 +10,44 @@ import SwiftUI
 struct BenchView: View {
     @Environment(ViewModel.self) var viewModel
     @State private var showingSelection = false
-    //@State private var results: [BenchmarkResult] = []
 
     var body: some View {
         @Bindable var vm = viewModel
 
         VStack {
             if viewModel.selection.isEmpty {
-                ContentUnavailableView("Aucun algo sélectionné", systemImage: "chart.bar",
-                    description: Text("You need to choose at least one algorithm"))
-                Button("Choose algorithms") { showingSelection = true }
+                ContentUnavailableView {
+                    Label("No algorithm selected", systemImage: "chart.bar")
+                } description: {
+                    Text("You need to choose at least one algorithm")
+                    Button("Choose algorithms") { showingSelection = true }
+                }
+                
             } else {
+                BenchmarkView()
+            }
+        }
+        .sheet(isPresented: $showingSelection) {
+            BenchmarkSelectionSheet()
+        }
+    }
+}
+
+struct BenchmarkView: View {
+    @Environment(ViewModel.self) var viewModel
+    @State private var showingSelection = false
+
+    var body: some View {
+        VStack {
+            LazyHStack {
                 ForEach(viewModel.selection.sorted(), id: \.self) { id in
                     Text(viewModel.algorithms.first { $0.id == id }?.title ?? "Unknown")
                 }
-//                BenchConfigAndResults(selection: $selection, results: $results,
-//                                       onAddMore: { showingSelection = true })
+                Button(action: { showingSelection = true }) {
+                    Text("add more")
+                }
             }
+            
         }
         .sheet(isPresented: $showingSelection) {
             BenchmarkSelectionSheet()
@@ -80,13 +101,7 @@ struct BenchmarkSelectionSheet: View {
     }
 }
 
-struct BenchmarkView: View {
-    let algorithm: Algorithm
-    var body: some View {
-        Text(algorithm.title)
-    }
-}
-
 #Preview {
     BenchView()
+        .environment(ViewModel())
 }
