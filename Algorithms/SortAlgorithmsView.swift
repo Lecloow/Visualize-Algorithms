@@ -83,10 +83,6 @@ struct SortAlgorithmsView: View {
                 .onChange(of: viewModel.sortState.difficulty) {
                     viewModel.resetArray()
                 }
-//                Slider(
-//                    value: $vm.sortState.speed,
-//                    in: 0.1...25,
-//                )
                 NonLinearSlider(value: $vm.sortState.speed)
                 Text("Valeur : \(viewModel.sortState.speed, specifier: "%.2f")")
             }

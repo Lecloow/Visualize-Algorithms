@@ -6,6 +6,10 @@
 	objectVersion = 110;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		9FD460DF300262E1003D8F98 /* WrappingHStack in Frameworks */ = {isa = PBXBuildFile; productRef = 9FD460DE300262E1003D8F98 /* WrappingHStack */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXFileReference section */
 		9FE8020C2FF4273300601486 /* Algorithms.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Algorithms.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -22,6 +26,7 @@
 		9FE802092FF4273300601486 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			files = (
+				9FD460DF300262E1003D8F98 /* WrappingHStack in Frameworks */,
 			);
 		};
 /* End PBXFrameworksBuildPhase section */
@@ -60,6 +65,9 @@
 				9FE8020E2FF4273300601486 /* Algorithms */,
 			);
 			name = Algorithms;
+			packageProductDependencies = (
+				9FD460DE300262E1003D8F98 /* WrappingHStack */,
+			);
 			productName = Algorithms;
 			productReference = 9FE8020C2FF4273300601486 /* Algorithms.app */;
 			productType = "com.apple.product-type.application";
@@ -88,6 +96,9 @@
 			);
 			mainGroup = 9FE802032FF4273300601486;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				9FD460DD300262E1003D8F98 /* XCRemoteSwiftPackageReference "WrappingHStack" */,
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 9FE8020D2FF4273300601486 /* Products */;
 			projectDirPath = "";
@@ -320,6 +331,25 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		9FD460DD300262E1003D8F98 /* XCRemoteSwiftPackageReference "WrappingHStack" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/ksemianov/WrappingHStack";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 0.2.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		9FD460DE300262E1003D8F98 /* WrappingHStack */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 9FD460DD300262E1003D8F98 /* XCRemoteSwiftPackageReference "WrappingHStack" */;
+			productName = WrappingHStack;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 9FE802042FF4273300601486 /* Project object */;
 	validationLevel = 1;

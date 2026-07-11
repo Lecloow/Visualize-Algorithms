@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import WrappingHStack
 
 struct BenchView: View {
     @Environment(ViewModel.self) var viewModel
@@ -38,8 +39,9 @@ struct BenchmarkView: View {
     @State private var showingSelection = false
 
     var body: some View {
+        @Bindable var vm = viewModel
         VStack {
-            LazyHStack {
+            WrappingHStack(alignment: .leading) {
                 ForEach(viewModel.selection.sorted(), id: \.self) { id in
                     Text(viewModel.algorithms.first { $0.id == id }?.title ?? "Unknown")
                 }
@@ -47,8 +49,35 @@ struct BenchmarkView: View {
                     Text("add more")
                 }
             }
+            Color.green
+            LazyHStack {
+                Color.red
+                Color.blue
+            }
+            Slider(
+                value: $vm.sortState.speed,
+                in: 0.1...25,
+            )
+            HStack {
+                Picker("Difficulty", selection: $vm.sortState.difficulty) {
+                    ForEach(DifficultyType.allCases) { difficulty in
+                        Text(difficulty.rawValue)
+                            .tag(difficulty)
+                    }
+                }
+                .onChange(of: viewModel.sortState.difficulty) {
+                    viewModel.resetArray()
+                }
+                Button(action: { /*viewModel.startSorting(for: algorithm)*/ }) {
+                    Text("Start")
+                }
+                .buttonStyle(.glassProminent)
+                .tint(viewModel.sortState.isSorting ? Color.gray : Color.blue)
+                .disabled(viewModel.sortState.isSorting)
+            }
             
         }
+        .padding()
         .sheet(isPresented: $showingSelection) {
             BenchmarkSelectionSheet()
         }
@@ -105,3 +134,16 @@ struct BenchmarkSelectionSheet: View {
     BenchView()
         .environment(ViewModel())
 }
+
+#Preview {
+    @Previewable @State var vm = ViewModel()
+    BenchmarkView()
+        .onAppear{
+            vm.selection = Set([
+                vm.algorithms[0].id,
+                vm.algorithms[1].id
+            ])
+        }
+        .environment(vm)
+}
+
