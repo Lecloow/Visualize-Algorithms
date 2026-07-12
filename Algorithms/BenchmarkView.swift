@@ -43,17 +43,19 @@ struct BenchmarkView: View {
         VStack {
             WrappingHStack(alignment: .leading) {
                 ForEach(viewModel.selection.sorted(), id: \.self) { id in
-                    Text(viewModel.algorithms.first { $0.id == id }?.title ?? "Unknown")
+                    Tag(viewModel.algorithms.first { $0.id == id }?.title ?? "Unknown", color: .green)
                 }
                 Button(action: { showingSelection = true }) {
                     Text("add more")
                 }
             }
             Color.green
-            LazyHStack {
+                .frame(height: 300)
+            HStack {
                 Color.red
                 Color.blue
             }
+            .frame(height: 100)
             Slider(
                 value: $vm.sortState.speed,
                 in: 0.1...25,
@@ -137,6 +139,7 @@ struct BenchmarkSelectionSheet: View {
 
 #Preview {
     @Previewable @State var vm = ViewModel()
+    
     BenchmarkView()
         .onAppear{
             vm.selection = Set([
