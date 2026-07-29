@@ -42,8 +42,11 @@ struct BenchmarkView: View {
         @Bindable var vm = viewModel
         VStack {
             WrappingHStack(alignment: .leading) {
-                ForEach(viewModel.selection.sorted(), id: \.self) { id in
-                    Tag(viewModel.algorithms.first { $0.id == id }?.title ?? "Unknown", color: .green)
+                ForEach(Array(viewModel.selection.sorted().enumerated()), id: \.element) { index, id in
+                    Tag(
+                        viewModel.algorithms.first { $0.id == id }?.title ?? "Unknown",
+                        color: viewModel.tagColor[index]
+                    )
                 }
                 Button(action: { showingSelection = true }) {
                     Text("add more")
@@ -57,8 +60,8 @@ struct BenchmarkView: View {
             }
             .frame(height: 100)
             Slider(
-                value: $vm.sortState.speed,
-                in: 0.1...25,
+                value: $vm.sortState.length,
+                in: 100...100000,
             )
             HStack {
                 Picker("Difficulty", selection: $vm.sortState.difficulty) {
@@ -115,7 +118,9 @@ struct BenchmarkSelectionSheet: View {
                                     }
                                     Text(algo.title)
                                         .tint(.primary)
+                                    Spacer()
                                 }
+                                .contentShape(Rectangle())
                             }
                             .buttonStyle(.plain)
                             .disabled(disabled)

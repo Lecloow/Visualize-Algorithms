@@ -20,6 +20,8 @@ import SwiftUI
     }
     var selection: Set<Algorithm.ID> = []
     
+    var tagColor: [CustomColor] = [.blue, .gray, .green, .orange, .pink, .purple, .red, .black]
+    
     func getSortArray(difficulty: DifficultyType, size: Int = 100) {
         sortState.sortedIndices.removeAll()
         sortState.highlightedIndices.removeAll()
@@ -130,6 +132,7 @@ struct SortVisualizerState {
 
     var algorithmType: SortAlgorithmType = .bubble
     var speed = 1.0
+    var length = 100.0
     var sampleSpeed = 0.1
     var sample = false
 
