@@ -79,11 +79,11 @@ struct SortAlgorithmsView: View {
                 ForEach(DifficultyType.allCases) { difficulty in
                     Text(difficulty.rawValue)
                         .tag(difficulty)
-                        .foregroundStyle(.black)
+                        .foregroundStyle(.primary)
                 }
             }
             .pickerStyle(.menu)
-            .tint(.black)
+            .tint(.primary)
             .background(RoundedRectangle(cornerRadius: 12).foregroundStyle(.secondary.opacity(0.2)))
             .onChange(of: viewModel.sortState.difficulty) {
                 viewModel.resetArray()

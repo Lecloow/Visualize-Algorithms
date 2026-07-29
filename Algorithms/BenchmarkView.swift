@@ -45,7 +45,7 @@ struct BenchmarkView: View {
                 ForEach(Array(viewModel.selection.sorted().enumerated()), id: \.element) { index, id in
                     Tag(
                         viewModel.algorithms.first { $0.id == id }?.title ?? "Unknown",
-                        color: viewModel.tagColor[index]
+                        color: viewModel.tagColor[index % viewModel.tagColor.count]
                     )
                 }
                 Button(action: { showingSelection = true }) {
@@ -61,7 +61,7 @@ struct BenchmarkView: View {
             .frame(height: 100)
             Slider(
                 value: $vm.sortState.length,
-                in: 100...100000,
+                in: 100...10000,
             )
             HStack {
                 Picker("Difficulty", selection: $vm.sortState.difficulty) {
@@ -73,7 +73,12 @@ struct BenchmarkView: View {
                 .onChange(of: viewModel.sortState.difficulty) {
                     viewModel.resetArray()
                 }
-                Button(action: { /*viewModel.startSorting(for: algorithm)*/ }) {
+                Button(action: {
+                    guard let selectedID = viewModel.selection.first,
+                          let selectedAlgorithm = viewModel.algorithms.first(where: { $0.id == selectedID })
+                    else { return }
+                    viewModel.startSorting(for: selectedAlgorithm)
+                }) {
                     Text("Start")
                 }
                 .buttonStyle(.glassProminent)

@@ -22,16 +22,16 @@ import SwiftUI
     
     var tagColor: [CustomColor] = [.blue, .gray, .green, .orange, .pink, .purple, .red, .black]
     
-    func getSortArray(difficulty: DifficultyType, size: Int = 100) {
+    func getSortArray(difficulty: DifficultyType, size: Double = 100) {
         sortState.sortedIndices.removeAll()
         sortState.highlightedIndices.removeAll()
         switch difficulty {
         case .bestCase:
-            sortState.array = Array(1...size)
+            sortState.array = Array(1...Int(size))
         case .worstCase:
-            sortState.array = Array((1...size).reversed())
+            sortState.array = Array((1...Int(size)).reversed())
         case .randomCase:
-            sortState.array = Array(1...size).shuffled()
+            sortState.array = Array(1...Int(size)).shuffled()
         case .sampleCase:
             sortState.array = [5, 3, 8, 1, 9, 2, 7, 4, 6, 10]
         }
@@ -72,7 +72,7 @@ import SwiftUI
     func sampleCase() {
         sortState.isSorting = false
         sortState.sample = true
-        getSortArray(difficulty: .sampleCase)
+        getSortArray(difficulty: .sampleCase, size: 10)
         sortState.currentMaxValue = sortState.array.max() ?? 1
         sortState.currentStep = 0
         sortState.highlightedIndices.removeAll()
