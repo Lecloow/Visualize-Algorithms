@@ -59,32 +59,23 @@ struct BenchmarkView: View {
                 Color.blue
             }
             .frame(height: 100)
-            Slider(
-                value: $vm.sortState.length,
-                in: 100...10000,
-            )
+            HStack {
+                Slider(
+                    value: $vm.sortState.length,
+                    in: 100...10000,
+                )
+                Text("length: \(Int(viewModel.sortState.length))")
+            }
             ForEach(viewModel.sortState.elapsedTime, id: \.self) { time in
                 Text(String(format: "%.9f", time) + "s")
                     .padding(4)
             }
-            HStack {
-                Picker("Difficulty", selection: $vm.sortState.difficulty) {
-                    ForEach(DifficultyType.allCases) { difficulty in
-                        Text(difficulty.rawValue)
-                            .tag(difficulty)
-                    }
-                }
-                .onChange(of: viewModel.sortState.difficulty) {
-                    viewModel.resetArray()
-                }
-                Button(action: { viewModel.startBenchmark() }) {
-                    Text("Start")
-                }
-                .buttonStyle(.glassProminent)
-                .tint(viewModel.sortState.isSorting ? Color.gray : Color.blue)
-                .disabled(viewModel.sortState.isSorting)
+            Button(action: { viewModel.startBenchmark() }) {
+                Text("Start")
             }
-            
+            .buttonStyle(.glassProminent)
+            .tint(viewModel.sortState.isSorting ? Color.gray : Color.blue)
+            .disabled(viewModel.sortState.isSorting)
         }
         .padding()
         .sheet(isPresented: $showingSelection) {

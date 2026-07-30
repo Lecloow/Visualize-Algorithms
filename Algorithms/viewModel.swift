@@ -22,18 +22,18 @@ import SwiftUI
     
     var tagColor: [CustomColor] = [.blue, .gray, .green, .orange, .pink, .purple, .red, .black]
     
-    func getSortArray(difficulty: DifficultyType, size: Double = 100) {
+    func getSortArray(difficulty: DifficultyType, size: Double = 100) -> [Int] {
         sortState.sortedIndices.removeAll()
         sortState.highlightedIndices.removeAll()
         switch difficulty {
         case .bestCase:
-            sortState.array = Array(1...Int(size))
+            return Array(1...Int(size))
         case .worstCase:
-            sortState.array = Array((1...Int(size)).reversed())
+            return Array((1...Int(size)).reversed())
         case .randomCase:
-            sortState.array = Array(1...Int(size)).shuffled()
+            return Array(1...Int(size)).shuffled()
         case .sampleCase:
-            sortState.array = [5, 3, 8, 1, 9, 2, 7, 4, 6, 10]
+            return[5, 3, 8, 1, 9, 2, 7, 4, 6, 10]
         }
     }
     
@@ -60,6 +60,7 @@ import SwiftUI
     
     func startBenchmark() {
         guard !sortState.isSorting else { return }
+        let array = getSortArray(difficulty: .randomCase, size: sortState.length)
         
         for selection in selection {
             let algorithm = algorithms.first(where: { $0.id == selection })
@@ -67,13 +68,14 @@ import SwiftUI
             guard let engine = sortAlgorithms[type] else { return }
             
             prepareRun()
-            let elapsedTime = engine.sort(sortState.array)
+            let elapsedTime = engine.sort(array)
             sortState.elapsedTime.append(elapsedTime)
         }
+        sortState.isSorting = false
     }
     
     func resetArray() {
-        getSortArray(difficulty: sortState.difficulty)
+        sortState.array = getSortArray(difficulty: sortState.difficulty)
         sortState.sample = false
         sortState.currentMaxValue = sortState.array.max() ?? 1
         sortState.currentStep = 0
@@ -87,7 +89,7 @@ import SwiftUI
     func sampleCase() {
         sortState.isSorting = false
         sortState.sample = true
-        getSortArray(difficulty: .sampleCase, size: 10)
+        sortState.array = getSortArray(difficulty: .sampleCase, size: 10)
         sortState.currentMaxValue = sortState.array.max() ?? 1
         sortState.currentStep = 0
         sortState.highlightedIndices.removeAll()
