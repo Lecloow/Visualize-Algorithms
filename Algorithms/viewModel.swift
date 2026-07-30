@@ -58,6 +58,20 @@ import SwiftUI
 
     }
     
+    func startBenchmark() {
+        guard !sortState.isSorting else { return }
+        
+        for selection in selection {
+            let algorithm = algorithms.first(where: { $0.id == selection })
+            guard case .sorting(let type) = algorithm!.type else { return }
+            guard let engine = sortAlgorithms[type] else { return }
+            
+            prepareRun()
+            let elapsedTime = engine.sort(sortState.array)
+            sortState.elapsedTime.append(elapsedTime)
+        }
+    }
+    
     func resetArray() {
         getSortArray(difficulty: sortState.difficulty)
         sortState.sample = false
@@ -67,6 +81,7 @@ import SwiftUI
         sortState.highlightedIndices.removeAll()
         sortState.sortedIndices.removeAll()
         sortState.steps.removeAll()
+        sortState.elapsedTime.removeAll()
     }
     
     func sampleCase() {
@@ -78,6 +93,7 @@ import SwiftUI
         sortState.highlightedIndices.removeAll()
         sortState.sortedIndices.removeAll()
         sortState.steps.removeAll()
+        sortState.elapsedTime.removeAll()
     }
     
     private func prepareRun() {
@@ -144,6 +160,7 @@ struct SortVisualizerState {
     var currentStep = 0
 
     var steps: [SortStep] = []
+    var elapsedTime: [TimeInterval] = []
 
     var highlightedIndices: Set<Int> = []
     var sortedIndices: Set<Int> = []

@@ -63,6 +63,10 @@ struct BenchmarkView: View {
                 value: $vm.sortState.length,
                 in: 100...10000,
             )
+            ForEach(viewModel.sortState.elapsedTime, id: \.self) { time in
+                Text(String(format: "%.9f", time) + "s")
+                    .padding(4)
+            }
             HStack {
                 Picker("Difficulty", selection: $vm.sortState.difficulty) {
                     ForEach(DifficultyType.allCases) { difficulty in
@@ -73,12 +77,7 @@ struct BenchmarkView: View {
                 .onChange(of: viewModel.sortState.difficulty) {
                     viewModel.resetArray()
                 }
-                Button(action: {
-                    guard let selectedID = viewModel.selection.first,
-                          let selectedAlgorithm = viewModel.algorithms.first(where: { $0.id == selectedID })
-                    else { return }
-                    viewModel.startSorting(for: selectedAlgorithm)
-                }) {
+                Button(action: { viewModel.startBenchmark() }) {
                     Text("Start")
                 }
                 .buttonStyle(.glassProminent)

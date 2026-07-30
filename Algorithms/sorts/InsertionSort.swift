@@ -34,7 +34,7 @@ struct InsertionSort: SortingAlgorithm {
     }
     
     func sort(_ array: [Int]) -> TimeInterval {
-        let start = Date()
+        let start = DispatchTime.now().uptimeNanoseconds
         var tempArray = array
         for i in 1..<tempArray.count {
             let key = tempArray[i]
@@ -45,9 +45,8 @@ struct InsertionSort: SortingAlgorithm {
             }
             tempArray[j + 1] = key
         }
-        let finish = Date()
-        let elapsedTime = finish.timeIntervalSince(start)
-        return elapsedTime
+        let end = DispatchTime.now().uptimeNanoseconds
+        return Double(end - start) / 1_000_000_000
     }
     
 }
@@ -93,7 +92,7 @@ struct ImprovedInsertionSort: SortingAlgorithm {
         }
     
     func sort(_ array: [Int]) -> TimeInterval {
-        let start = Date()
+        let start = DispatchTime.now().uptimeNanoseconds
         var tempArray = array
         for i in 1..<tempArray.count {
             let key = tempArray[i]
@@ -116,8 +115,7 @@ struct ImprovedInsertionSort: SortingAlgorithm {
             }
             tempArray[low] = key
         }
-        let finish = Date()
-        let elapsedTime = finish.timeIntervalSince(start)
-        return elapsedTime
+        let end = DispatchTime.now().uptimeNanoseconds
+        return Double(end - start) / 1_000_000_000
     }
 }

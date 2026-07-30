@@ -29,7 +29,7 @@ struct BubbleSort: SortingAlgorithm {
     }
     
     func sort(_ array: [Int]) -> TimeInterval {
-        let start = Date()
+        let start = DispatchTime.now().uptimeNanoseconds
         var tempArray = array
         for i in 0..<tempArray.count {
             for j in 0..<(tempArray.count - i - 1) {
@@ -38,9 +38,8 @@ struct BubbleSort: SortingAlgorithm {
                 }
             }
         }
-        let finish = Date()
-        let elapsedTime = finish.timeIntervalSince(start)
-        return elapsedTime
+        let end = DispatchTime.now().uptimeNanoseconds
+        return Double(end - start) / 1_000_000_000
     }
     
 }
