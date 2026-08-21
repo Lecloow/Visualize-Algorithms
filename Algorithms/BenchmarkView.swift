@@ -66,9 +66,16 @@ struct BenchmarkView: View {
                 )
                 Text("length: \(Int(viewModel.sortState.length))")
             }
-            ForEach(viewModel.sortState.elapsedTime, id: \.self) { time in
-                Text(String(format: "%.9f", time) + "s")
-                    .padding(4)
+            ForEach(viewModel.sortState.benchmarkResults) { result in
+                HStack {
+                    Text(result.name)
+                        .fontWeight(.semibold)
+                    Spacer()
+                    Text(String(format: "%.4f", result.elapsedTime) + "s")
+                        .foregroundStyle(.secondary)
+                        .monospacedDigit()
+                }
+                .padding(4)
             }
             if viewModel.sortState.isSorting {
                 ProgressView("Benchmarking…")

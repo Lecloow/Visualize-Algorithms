@@ -62,24 +62,24 @@ import SwiftUI
         guard !sortState.isSorting else { return }
 
         sortState.isSorting = true
-        sortState.elapsedTime.removeAll()
+        sortState.benchmarkResults.removeAll()
 
         // Snapshot everything needed by the background task before leaving the main actor.
         let array = getSortArray(difficulty: .randomCase, size: sortState.length)
-        let engines: [any SortingAlgorithm] = selection.compactMap { id in
+        let engines: [(name: String, engine: any SortingAlgorithm)] = selection.compactMap { id in
             guard let algorithm = algorithms.first(where: { $0.id == id }),
                   case .sorting(let type) = algorithm.type,
                   let engine = sortAlgorithms[type] else { return nil }
-            return engine
+            return (algorithm.title, engine)
         }
 
         // Run the complete benchmark off the main actor. Only publish the final results
         // once, so the UI never has to render intermediate benchmark state.
-        let elapsedTimes = await Task.detached(priority: .userInitiated) {
-            engines.map { $0.sort(array) }
+        let results = await Task.detached(priority: .userInitiated) {
+            engines.map { BenchmarkResult(name: $0.name, elapsedTime: $0.engine.sort(array)) }
         }.value
 
-        sortState.elapsedTime = elapsedTimes
+        sortState.benchmarkResults = results
         sortState.isSorting = false
     }
     
@@ -92,9 +92,9 @@ import SwiftUI
         sortState.highlightedIndices.removeAll()
         sortState.sortedIndices.removeAll()
         sortState.steps.removeAll()
-        sortState.elapsedTime.removeAll()
+        sortState.benchmarkResults.removeAll()
     }
-    
+
     func sampleCase() {
         sortState.isSorting = false
         sortState.sample = true
@@ -104,9 +104,9 @@ import SwiftUI
         sortState.highlightedIndices.removeAll()
         sortState.sortedIndices.removeAll()
         sortState.steps.removeAll()
-        sortState.elapsedTime.removeAll()
+        sortState.benchmarkResults.removeAll()
     }
-    
+
     private func prepareRun() {
         sortState.isSorting = true
         sortState.currentStep = 0
@@ -155,8 +155,13 @@ import SwiftUI
     }
 }
 
-struct SortVisualizerState {
+struct BenchmarkResult: Identifiable, Equatable {
+    let id = UUID()
+    let name: String
+    let elapsedTime: TimeInterval
+}
 
+struct SortVisualizerState {
     var algorithmType: SortAlgorithmType = .bubble
     var speed = 1.0
     var length = 100.0
@@ -172,6 +177,7 @@ struct SortVisualizerState {
 
     var steps: [SortStep] = []
     var elapsedTime: [TimeInterval] = []
+    var benchmarkResults: [BenchmarkResult] = []
 
     var highlightedIndices: Set<Int> = []
     var sortedIndices: Set<Int> = []
