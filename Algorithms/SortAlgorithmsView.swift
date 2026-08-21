@@ -113,6 +113,6 @@ struct SortAlgorithmsView: View {
 }
 
 #Preview {
-    SortAlgorithmsView(algorithm: Algorithm(title: "Bubble Sort", description: "Efficient sorting algorithm...", type: .sorting(.bubble)), showLearnMoreSheet: false)
+    SortAlgorithmsView(algorithm: Algorithm(title: "Bubble Sort", description: "Efficient sorting algorithm...", type: .sorting(.bubble), color: .blue), showLearnMoreSheet: false)
         .environment(ViewModel())
 }

@@ -40,25 +40,58 @@ struct BenchmarkView: View {
 
     var body: some View {
         @Bindable var vm = viewModel
+        let algorithmMap = Dictionary(uniqueKeysWithValues: viewModel.algorithms.map { ($0.id, $0) })
         VStack {
             WrappingHStack(alignment: .leading) {
-                ForEach(Array(viewModel.selection.sorted().enumerated()), id: \.element) { index, id in
-                    Tag(
-                        viewModel.algorithms.first { $0.id == id }?.title ?? "Unknown",
-                        color: viewModel.tagColor[index % viewModel.tagColor.count]
-                    )
+                ForEach(viewModel.selection.sorted(), id: \.self) { algorithmID in
+                    if let algo = algorithmMap[algorithmID] {
+                        Tag(algo.title, color: algo.color)
+                    }
                 }
                 Button(action: { showingSelection = true }) {
                     Text("add more")
                 }
             }
-            Color.green
-                .frame(height: 300)
-            HStack {
-                Color.red
-                Color.blue
+            
+            Canvas { context, size in
+                let array = viewModel.sortState.benchmarkPreview
+                guard !array.isEmpty else { return }
+                let maxValue = Double(array.max() ?? 1)
+                let barWidth = size.width / CGFloat(array.count)
+                for (index, value) in array.enumerated() {
+                    let height = size.height * (Double(value) / maxValue)
+                    let rect = CGRect(
+                        x: CGFloat(index) * barWidth,
+                        y: size.height - height,
+                        width: max(barWidth - 0.5, 0.5),
+                        height: height
+                    )
+                    context.fill(Path(rect), with: .color(.blue.opacity(0.6)))
+                }
             }
-            .frame(height: 100)
+            .frame(height: 300)
+            .clipShape(RoundedRectangle(cornerRadius: 12))
+            // Result cards: one per benchmarked algorithm, laid out in a grid.
+            let rankedResults = viewModel.sortState.benchmarkResults
+                .sorted { $0.elapsedTime < $1.elapsedTime }
+            if !rankedResults.isEmpty {
+                let columns = rankedResults.count == 1
+                    ? [GridItem(.flexible())]
+                    : [GridItem(.flexible(), spacing: 12), GridItem(.flexible(), spacing: 12)]
+                LazyVGrid(columns: columns, spacing: 12) {
+                    ForEach(Array(rankedResults.enumerated()), id: \.element.id) { index, result in
+                        if let algo = algorithmMap[result.id] {
+                            BenchmarkResultCard(
+                                rank: index + 1,
+                                name: algo.title,
+                                elapsedTime: result.elapsedTime,
+                                relativeTime: result.elapsedTime / (rankedResults.map(\.elapsedTime).max() ?? 1),
+                                color: algo.color
+                            )
+                        }
+                    }
+                }
+            }
             HStack {
                 Slider(
                     value: $vm.sortState.length,
@@ -66,16 +99,8 @@ struct BenchmarkView: View {
                 )
                 Text("length: \(Int(viewModel.sortState.length))")
             }
-            ForEach(viewModel.sortState.benchmarkResults) { result in
-                HStack {
-                    Text(result.name)
-                        .fontWeight(.semibold)
-                    Spacer()
-                    Text(String(format: "%.4f", result.elapsedTime) + "s")
-                        .foregroundStyle(.secondary)
-                        .monospacedDigit()
-                }
-                .padding(4)
+            .onChange(of: viewModel.sortState.length) {
+                viewModel.regenerateBenchmarkPreview()
             }
             if viewModel.sortState.isSorting {
                 ProgressView("Benchmarking…")
@@ -92,6 +117,60 @@ struct BenchmarkView: View {
         .sheet(isPresented: $showingSelection) {
             BenchmarkSelectionSheet()
         }
+    }
+}
+
+struct BenchmarkResultCard: View {
+    let rank: Int
+    let name: String
+    let elapsedTime: TimeInterval
+    let relativeTime: Double
+    let color: CustomColor
+
+    private var cardColor: Color {
+        switch color {
+        case .blue: return .blue
+        case .gray: return .gray
+        case .green: return .green
+        case .orange: return .orange
+        case .pink: return .pink
+        case .purple: return .purple
+        case .red: return .red
+        case .black: return .primary
+        }
+    }
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            Text(name)
+                .font(.title3)
+                .fontWeight(.semibold)
+            HStack {
+                Text("#\(rank)")
+                    .font(.caption)
+                    .fontWeight(.bold)
+                    .padding(.horizontal, 8)
+                    .padding(.vertical, 3)
+                    .background(cardColor.opacity(0.2), in: Capsule())
+                    .foregroundStyle(cardColor)
+                
+                Text(String(format: "%.4f", elapsedTime) + "s")
+                    .monospacedDigit()
+            }
+            // Bar length is proportional to the slowest algorithm in this run.
+            GeometryReader { geometry in
+                ZStack(alignment: .leading) {
+                    Capsule()
+                        .fill(cardColor.opacity(0.15))
+                    Capsule()
+                        .fill(cardColor)
+                        .frame(width: geometry.size.width * relativeTime)
+                }
+            }
+            .frame(height: 6)
+        }
+        .padding(12)
+        .background(Color(.secondarySystemBackground), in: RoundedRectangle(cornerRadius: 12))
     }
 }
 

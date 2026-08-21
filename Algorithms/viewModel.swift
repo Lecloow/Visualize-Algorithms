@@ -10,7 +10,11 @@ import SwiftUI
 
 @Observable class ViewModel {
     private var model = createModel()
-    
+
+    init() {
+        regenerateBenchmarkPreview()
+    }
+
     private static func createModel() -> Model {
         Model()
     }
@@ -19,9 +23,7 @@ import SwiftUI
         model.algorithms
     }
     var selection: Set<Algorithm.ID> = []
-    
-    var tagColor: [CustomColor] = [.blue, .gray, .green, .orange, .pink, .purple, .red, .black]
-    
+        
     func getSortArray(difficulty: DifficultyType, size: Double = 100) -> [Int] {
         sortState.sortedIndices.removeAll()
         sortState.highlightedIndices.removeAll()
@@ -58,25 +60,63 @@ import SwiftUI
 
     }
     
+    /// Regenerates the small array shown in the benchmark preview canvas.
+    /// Downsamples to at most 500 bars so drawing stays cheap even at length 10 000.
+    func regenerateBenchmarkPreview() {
+        let size = Int(sortState.length)
+        let source = Array(1...max(size, 1)).shuffled()
+        if size <= 500 {
+            sortState.benchmarkPreview = source
+        } else {
+            let stride = size / 500
+            sortState.benchmarkPreview = source.enumerated()
+                .filter { $0.offset % stride == 0 }
+                .map { $0.element }
+        }
+    }
+
+//    func startBenchmark() async {
+//        guard !sortState.isSorting else { return }
+//        sortState.isSorting = true
+//        sortState.benchmarkResults.removeAll()
+//
+//        // Snapshot everything needed by the background task before leaving the main actor.
+//        let array = getSortArray(difficulty: .randomCase, size: sortState.length)
+//        let engines: [(id: UUID, engine: any SortingAlgorithm)] = selection.compactMap { id in
+//            guard let algorithm = algorithms.first(where: { $0.id == id }),
+//                  case .sorting(let type) = algorithm.type,
+//                  let engine = sortAlgorithms[type] else { return nil }
+//            return (algorithm.title, engine)
+//        }
+//
+//        // Run the complete benchmark off the main actor. Only publish the final results
+//        // once, so the UI never has to render intermediate benchmark state.
+//        let results = await Task.detached(priority: .userInitiated) {
+//            engines.map { BenchmarkResult(id: $0.id, elapsedTime: $0.engine.sort(array)) }
+//        }.value
+//
+//        sortState.benchmarkResults = results
+//        sortState.isSorting = false
+//    }
+    
     func startBenchmark() async {
         guard !sortState.isSorting else { return }
-
         sortState.isSorting = true
         sortState.benchmarkResults.removeAll()
 
         // Snapshot everything needed by the background task before leaving the main actor.
         let array = getSortArray(difficulty: .randomCase, size: sortState.length)
-        let engines: [(name: String, engine: any SortingAlgorithm)] = selection.compactMap { id in
+        let engines: [(id: UUID, name: String, engine: any SortingAlgorithm)] = selection.compactMap { id in
             guard let algorithm = algorithms.first(where: { $0.id == id }),
                   case .sorting(let type) = algorithm.type,
                   let engine = sortAlgorithms[type] else { return nil }
-            return (algorithm.title, engine)
+            return (algorithm.id, algorithm.title, engine)
         }
 
         // Run the complete benchmark off the main actor. Only publish the final results
         // once, so the UI never has to render intermediate benchmark state.
         let results = await Task.detached(priority: .userInitiated) {
-            engines.map { BenchmarkResult(name: $0.name, elapsedTime: $0.engine.sort(array)) }
+            engines.map { BenchmarkResult(id: $0.id, elapsedTime: $0.engine.sort(array)) }
         }.value
 
         sortState.benchmarkResults = results
@@ -156,8 +196,7 @@ import SwiftUI
 }
 
 struct BenchmarkResult: Identifiable, Equatable {
-    let id = UUID()
-    let name: String
+    let id: UUID
     let elapsedTime: TimeInterval
 }
 
@@ -178,7 +217,10 @@ struct SortVisualizerState {
     var steps: [SortStep] = []
     var elapsedTime: [TimeInterval] = []
     var benchmarkResults: [BenchmarkResult] = []
+    var benchmarkPreview: [Int] = []
 
     var highlightedIndices: Set<Int> = []
     var sortedIndices: Set<Int> = []
 }
+    
+ 

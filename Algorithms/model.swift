@@ -21,6 +21,7 @@ struct Algorithm: Identifiable {
     let title: String
     let description: String
     let type: AlgorithmType
+    let color: CustomColor
 }
 
 enum AlgorithmType {
@@ -76,10 +77,10 @@ struct Model {
     
     init() {
         algorithms = [
-            Algorithm(title: "Bubble Sort", description: "Efficient sorting algorithm...", type: .sorting(.bubble)),
-            Algorithm(title: "Insertion Sort", description: "Efficient sorting algorithm...", type: .sorting(.insertion)),
-            Algorithm(title: "Binary Search", description: "Divide and conquer...", type: .searching(.binarySearch),),
-            Algorithm(title: "Dijkstra", description: "Shortest path algorithm...", type: .graph(.dijkstra))
+            Algorithm(title: "Bubble Sort", description: "Efficient sorting algorithm...", type: .sorting(.bubble), color: .blue),
+            Algorithm(title: "Insertion Sort", description: "Efficient sorting algorithm...", type: .sorting(.insertion), color: .orange),
+            Algorithm(title: "Binary Search", description: "Divide and conquer...", type: .searching(.binarySearch), color: .green),
+            Algorithm(title: "Dijkstra", description: "Shortest path algorithm...", type: .graph(.dijkstra), color: .pink)
         ]
     }
     
