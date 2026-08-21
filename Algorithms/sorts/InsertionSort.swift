@@ -33,7 +33,7 @@ struct InsertionSort: SortingAlgorithm {
         }
     }
     
-    func sort(_ array: [Int]) -> TimeInterval {
+    nonisolated func sort(_ array: [Int]) -> TimeInterval {
         let start = DispatchTime.now().uptimeNanoseconds
         var tempArray = array
         for i in 1..<tempArray.count {
@@ -91,7 +91,7 @@ struct ImprovedInsertionSort: SortingAlgorithm {
             }
         }
     
-    func sort(_ array: [Int]) -> TimeInterval {
+    nonisolated func sort(_ array: [Int]) -> TimeInterval {
         let start = DispatchTime.now().uptimeNanoseconds
         var tempArray = array
         for i in 1..<tempArray.count {

@@ -28,7 +28,7 @@ struct BubbleSort: SortingAlgorithm {
         }
     }
     
-    func sort(_ array: [Int]) -> TimeInterval {
+    nonisolated func sort(_ array: [Int]) -> TimeInterval {
         let start = DispatchTime.now().uptimeNanoseconds
         var tempArray = array
         for i in 0..<tempArray.count {

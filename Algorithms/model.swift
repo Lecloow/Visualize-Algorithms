@@ -99,5 +99,5 @@ protocol SortingAlgorithm {
     func generateSteps(from array: [Int]) -> AsyncStream<SortStep>
     
     // For benchmarking
-    func sort(_ array: [Int]) -> TimeInterval
+    nonisolated func sort(_ array: [Int]) -> TimeInterval
 }

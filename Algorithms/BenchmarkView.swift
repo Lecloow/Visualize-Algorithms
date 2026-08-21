@@ -70,8 +70,12 @@ struct BenchmarkView: View {
                 Text(String(format: "%.9f", time) + "s")
                     .padding(4)
             }
-            Button(action: { viewModel.startBenchmark() }) {
-                Text("Start")
+            if viewModel.sortState.isSorting {
+                ProgressView("Benchmarking…")
+                    .padding(4)
+            }
+            Button(action: { Task { await viewModel.startBenchmark() } }) {
+                Text(viewModel.sortState.isSorting ? "Sorting ..." : "Start")
             }
             .buttonStyle(.glassProminent)
             .tint(viewModel.sortState.isSorting ? Color.gray : Color.blue)
