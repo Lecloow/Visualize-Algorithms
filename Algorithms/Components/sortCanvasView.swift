@@ -25,29 +25,32 @@ struct SortCanvasView: View {
     
     var body: some View {
         GeometryReader { geometry in
-            let totalWidth = geometry.size.width
             let count = array.count
-            let barWidth = totalWidth / CGFloat(count)
-            
-            Canvas { context, size in
-                for index in 0..<count {
-                    let value = array[index]
-                    let xPos = floor(CGFloat(index) * barWidth)
-                    let nextXPos = floor(CGFloat(index + 1) * barWidth)
-                    let width = nextXPos - xPos // To avoid little space between bar (bc the pos is rounded so sometimes there is a 1 px gap)
-                    let barHeight = (CGFloat(value) / CGFloat(maxValue)) * size.height
-                    
-                    let rect = CGRect(
-                        x: xPos,
-                        y: size.height - barHeight,
-                        width: width,
-                        height: barHeight
-                    )
-                    
-                    let color: Color = viewModel.sortState.sortedIndices.contains(index) ? .green :
-                    viewModel.sortState.highlightedIndices.contains(index) ? .blue : .primary
-                    
-                    context.fill(Path(rect), with: .color(color))
+            if count == 0 {
+                Color.clear
+            } else {
+                let barWidth = geometry.size.width / CGFloat(count)
+
+                Canvas { context, size in
+                    for index in 0..<count {
+                        let value = array[index]
+                        let xPos = floor(CGFloat(index) * barWidth)
+                        let nextXPos = floor(CGFloat(index + 1) * barWidth)
+                        let width = nextXPos - xPos
+                        let barHeight = (CGFloat(value) / CGFloat(max(maxValue, 1))) * size.height
+
+                        let rect = CGRect(
+                            x: xPos,
+                            y: size.height - barHeight,
+                            width: width,
+                            height: barHeight
+                        )
+
+                        let color: Color = viewModel.sortState.sortedIndices.contains(index) ? .green :
+                        viewModel.sortState.highlightedIndices.contains(index) ? .blue : .primary
+
+                        context.fill(Path(rect), with: .color(color))
+                    }
                 }
             }
         }

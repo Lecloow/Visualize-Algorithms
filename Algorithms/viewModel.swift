@@ -41,18 +41,11 @@ import SwiftUI
     
     var sortState = SortVisualizerState()
     
-    let sortAlgorithms: [SortAlgorithmType: any SortingAlgorithm] = [
-        .bubble: BubbleSort(),
-        .selection: BubbleSort(),
-        .insertion: InsertionSort(),
-        .merge: BubbleSort(),
-        .quick: BubbleSort()
-    ]
     
     func startSorting(for algorithm: Algorithm) {
         guard case .sorting(let type) = algorithm.type else { return }
         guard !sortState.isSorting else { return }
-        guard let engine = sortAlgorithms[type] else { return }
+        guard let engine = model.sortAlgorithms[type] else { return }
         
         prepareRun()
         let stream = engine.generateSteps(from: sortState.array)
@@ -85,7 +78,7 @@ import SwiftUI
         let engines: [(id: UUID, name: String, engine: any SortingAlgorithm)] = selection.compactMap { id in
             guard let algorithm = algorithms.first(where: { $0.id == id }),
                   case .sorting(let type) = algorithm.type,
-                  let engine = sortAlgorithms[type] else { return nil }
+                  let engine = model.sortAlgorithms[type] else { return nil }
             return (algorithm.id, algorithm.title, engine)
         }
 

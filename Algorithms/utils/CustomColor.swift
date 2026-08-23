@@ -31,6 +31,9 @@ enum CustomColor {
     /// Resolved SwiftUI colors for this token.
     var appColor: AppColor {
         let background = Color(hex: hex)
+        if case .black = self {
+            return AppColor(background: .white, foreground: .black)
+        }
         // White text on dark backgrounds, black on light ones.
         let foreground: Color = Self.luminance(ofHex: hex) < 0.5 ? .white : .black
         return AppColor(background: background, foreground: foreground)
@@ -48,9 +51,21 @@ enum CustomColor {
 
     /// Parses 3-digit RGB, 6-digit RGB and 8-digit ARGB hex strings.
     static func rgba(fromHex hex: String) -> (r: UInt64, g: UInt64, b: UInt64, a: UInt64)? {
+        let cleaned = hex.trimmingCharacters(in: CharacterSet.alphanumerics.inverted)
+        guard [3, 6, 8].contains(cleaned.count),
+              cleaned.unicodeScalars.allSatisfy({
+                  (48...57).contains($0.value) ||
+                  (65...70).contains($0.value) ||
+                  (97...102).contains($0.value)
+              }) else {
+            return nil
+        }
+
         var int: UInt64 = 0
-        Scanner(string: hex).scanHexInt64(&int)
-        switch hex.count {
+        let scanner = Scanner(string: cleaned)
+        guard scanner.scanHexInt64(&int), scanner.isAtEnd else { return nil }
+
+        switch cleaned.count {
         case 3:
             let r = (int >> 8 & 0xF) * 17
             let g = (int >> 4 & 0xF) * 17
@@ -79,21 +94,16 @@ struct AppColor {
 }
 
 extension Color {
-    /// Creates a color from a hex string like "#FF8800", "F80" or "80FF8800" (ARGB).
-    /// Unparsable input falls back to fully transparent — check with
-    /// `CustomColor.rgba(fromHex:)` if you need strict validation.
     init(hex: String) {
-        let cleaned = hex.trimmingCharacters(in: CharacterSet.alphanumerics.inverted)
-        if let c = CustomColor.rgba(fromHex: cleaned) {
-            self.init(
-                .sRGB,
-                red: Double(c.r) / 255,
-                green: Double(c.g) / 255,
-                blue: Double(c.b) / 255,
-                opacity: Double(c.a) / 255
-            )
-        } else {
+        guard let color = CustomColor.rgba(fromHex: hex) else {
             self.init(.sRGB, red: 1, green: 1, blue: 1, opacity: 0)
+            return
         }
+
+        self.init(.sRGB,
+                  red: Double(color.r) / 255,
+                  green: Double(color.g) / 255,
+                  blue: Double(color.b) / 255,
+                  opacity: Double(color.a) / 255)
     }
 }
