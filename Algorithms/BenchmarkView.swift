@@ -86,7 +86,7 @@ struct BenchmarkView: View {
                                 name: algo.title,
                                 elapsedTime: result.elapsedTime,
                                 relativeTime: result.elapsedTime / (rankedResults.map(\.elapsedTime).max() ?? 1),
-                                color: algo.color
+                                cardColor: algo.color
                             )
                         }
                     }
@@ -125,22 +125,10 @@ struct BenchmarkResultCard: View {
     let name: String
     let elapsedTime: TimeInterval
     let relativeTime: Double
-    let color: CustomColor
-
-    private var cardColor: Color {
-        switch color {
-        case .blue: return .blue
-        case .gray: return .gray
-        case .green: return .green
-        case .orange: return .orange
-        case .pink: return .pink
-        case .purple: return .purple
-        case .red: return .red
-        case .black: return .primary
-        }
-    }
+    let cardColor: AppColor
 
     var body: some View {
+        let color = cardColor.background
         VStack(alignment: .leading, spacing: 8) {
             Text(name)
                 .font(.title3)
@@ -151,8 +139,8 @@ struct BenchmarkResultCard: View {
                     .fontWeight(.bold)
                     .padding(.horizontal, 8)
                     .padding(.vertical, 3)
-                    .background(cardColor.opacity(0.2), in: Capsule())
-                    .foregroundStyle(cardColor)
+                    .background(color.opacity(0.2), in: Capsule())
+                    .foregroundStyle(color)
                 
                 Text(String(format: "%.4f", elapsedTime) + "s")
                     .monospacedDigit()
@@ -161,9 +149,9 @@ struct BenchmarkResultCard: View {
             GeometryReader { geometry in
                 ZStack(alignment: .leading) {
                     Capsule()
-                        .fill(cardColor.opacity(0.15))
+                        .fill(color.opacity(0.15))
                     Capsule()
-                        .fill(cardColor)
+                        .fill(color)
                         .frame(width: geometry.size.width * relativeTime)
                 }
             }

@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import SwiftUI
 
 enum DifficultyType: String, CaseIterable, Identifiable {
     case bestCase = "best case"
@@ -21,7 +22,8 @@ struct Algorithm: Identifiable {
     let title: String
     let description: String
     let type: AlgorithmType
-    let color: CustomColor
+    let customColor: CustomColor
+    var color: AppColor { AppColor(customColor) }
 }
 
 enum AlgorithmType {
@@ -77,10 +79,10 @@ struct Model {
     
     init() {
         algorithms = [
-            Algorithm(title: "Bubble Sort", description: "Efficient sorting algorithm...", type: .sorting(.bubble), color: .blue),
-            Algorithm(title: "Insertion Sort", description: "Efficient sorting algorithm...", type: .sorting(.insertion), color: .orange),
-            Algorithm(title: "Binary Search", description: "Divide and conquer...", type: .searching(.binarySearch), color: .green),
-            Algorithm(title: "Dijkstra", description: "Shortest path algorithm...", type: .graph(.dijkstra), color: .pink)
+            Algorithm(title: "Bubble Sort", description: "Efficient sorting algorithm...", type: .sorting(.bubble), customColor: .blue),
+            Algorithm(title: "Insertion Sort", description: "Efficient sorting algorithm...", type: .sorting(.insertion), customColor: .orange),
+            Algorithm(title: "Binary Search", description: "Divide and conquer...", type: .searching(.binarySearch), customColor: .green),
+            Algorithm(title: "Dijkstra", description: "Shortest path algorithm...", type: .graph(.dijkstra), customColor: .pink)
         ]
     }
     
@@ -102,3 +104,4 @@ protocol SortingAlgorithm {
     // For benchmarking
     nonisolated func sort(_ array: [Int]) -> TimeInterval
 }
+

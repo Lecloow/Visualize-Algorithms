@@ -9,46 +9,22 @@ import SwiftUI
 
 struct Tag: View {
     let content: String
-    let color: CustomColor
+    let color: AppColor
     
-    init(_ content: String, color: CustomColor) {
+    init(_ content: String, color: AppColor) {
         self.content = content
         self.color = color
     }
     
-    private var backgroundColor: Color {
-        switch color {
-        case .blue: return .blue
-        case .gray: return .gray
-        case .green: return .green
-        case .orange: return .orange
-        case .pink: return .pink
-        case .purple: return .purple
-        case .red: return .red
-        case .black: return .white
-        }
-    }
-
-
-    private var foregroundColor: Color {
-       switch color {
-       case .blue, .gray, .green, .orange, .pink, .purple, .red:
-           return .white
-       case .black:
-           return .black
-       }
-   }
-
-    
     var body: some View {
         Text(content)
-            .foregroundStyle(foregroundColor)
+            .foregroundStyle(color.foreground)
             .padding(10)
-            .background(backgroundColor)
+            .background(color.background)
             .cornerRadius(100)
     }
 }
 
 #Preview {
-    Tag("Bubble sort", color: .green)
+    Tag("Bubble sort", color: AppColor(.green))
 }
