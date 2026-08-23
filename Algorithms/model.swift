@@ -23,7 +23,7 @@ struct Algorithm: Identifiable {
     let description: String
     let type: AlgorithmType
     let customColor: CustomColor
-    var color: AppColor { AppColor(customColor) }
+    var color: AppColor { customColor.appColor }
 }
 
 enum AlgorithmType {

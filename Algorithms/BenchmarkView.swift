@@ -53,24 +53,10 @@ struct BenchmarkView: View {
                 }
             }
             
-            Canvas { context, size in
-                let array = viewModel.sortState.benchmarkPreview
-                guard !array.isEmpty else { return }
-                let maxValue = Double(array.max() ?? 1)
-                let barWidth = size.width / CGFloat(array.count)
-                for (index, value) in array.enumerated() {
-                    let height = size.height * (Double(value) / maxValue)
-                    let rect = CGRect(
-                        x: CGFloat(index) * barWidth,
-                        y: size.height - height,
-                        width: max(barWidth - 0.5, 0.5),
-                        height: height
-                    )
-                    context.fill(Path(rect), with: .color(.blue.opacity(0.6)))
-                }
-            }
+            SortCanvasView(isPreview: true)
             .frame(height: 300)
             .clipShape(RoundedRectangle(cornerRadius: 12))
+            
             // Result cards: one per benchmarked algorithm, laid out in a grid.
             let rankedResults = viewModel.sortState.benchmarkResults
                 .sorted { $0.elapsedTime < $1.elapsedTime }

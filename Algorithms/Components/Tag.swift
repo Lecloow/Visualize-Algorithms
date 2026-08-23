@@ -26,5 +26,5 @@ struct Tag: View {
 }
 
 #Preview {
-    Tag("Bubble sort", color: AppColor(.green))
+    Tag("Bubble sort", color: CustomColor.green.appColor)
 }

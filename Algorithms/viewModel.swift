@@ -24,7 +24,7 @@ import SwiftUI
     }
     var selection: Set<Algorithm.ID> = []
         
-    func getSortArray(difficulty: DifficultyType, size: Double = 100) -> [Int] {
+    private func getSortArray(difficulty: DifficultyType, size: Double = 100) -> [Int] {
         sortState.sortedIndices.removeAll()
         sortState.highlightedIndices.removeAll()
         switch difficulty {
@@ -35,7 +35,7 @@ import SwiftUI
         case .randomCase:
             return Array(1...Int(size)).shuffled()
         case .sampleCase:
-            return[5, 3, 8, 1, 9, 2, 7, 4, 6, 10]
+            return [5, 3, 8, 1, 9, 2, 7, 4, 6, 10]
         }
     }
     
@@ -74,30 +74,6 @@ import SwiftUI
                 .map { $0.element }
         }
     }
-
-//    func startBenchmark() async {
-//        guard !sortState.isSorting else { return }
-//        sortState.isSorting = true
-//        sortState.benchmarkResults.removeAll()
-//
-//        // Snapshot everything needed by the background task before leaving the main actor.
-//        let array = getSortArray(difficulty: .randomCase, size: sortState.length)
-//        let engines: [(id: UUID, engine: any SortingAlgorithm)] = selection.compactMap { id in
-//            guard let algorithm = algorithms.first(where: { $0.id == id }),
-//                  case .sorting(let type) = algorithm.type,
-//                  let engine = sortAlgorithms[type] else { return nil }
-//            return (algorithm.title, engine)
-//        }
-//
-//        // Run the complete benchmark off the main actor. Only publish the final results
-//        // once, so the UI never has to render intermediate benchmark state.
-//        let results = await Task.detached(priority: .userInitiated) {
-//            engines.map { BenchmarkResult(id: $0.id, elapsedTime: $0.engine.sort(array)) }
-//        }.value
-//
-//        sortState.benchmarkResults = results
-//        sortState.isSorting = false
-//    }
     
     func startBenchmark() async {
         guard !sortState.isSorting else { return }

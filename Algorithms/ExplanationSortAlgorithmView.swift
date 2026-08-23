@@ -13,7 +13,7 @@ struct ExplanationSortAlgorithmView: View {
     
     var body: some View {
         VStack {
-            sortCanvasView()
+            SortCanvasView()
             HStack(spacing: 20) {
                 Button(action: { viewModel.startSorting(for: algorithm) }) {
                     Text("Start")
