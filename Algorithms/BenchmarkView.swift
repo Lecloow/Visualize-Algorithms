@@ -88,13 +88,14 @@ struct BenchmarkView: View {
         }
     }
     
+    @ViewBuilder
     var resultCards: some View {
         let rankedResults = viewModel.sortState.benchmarkResults.sorted { $0.elapsedTime < $1.elapsedTime }
         if !rankedResults.isEmpty {
             let columns = rankedResults.count == 1
                 ? [GridItem(.flexible())]
                 : [GridItem(.flexible()), GridItem(.flexible())]
-            return AnyView(LazyVGrid(columns: columns, spacing: 5) {
+            LazyVGrid(columns: columns, spacing: 5) {
                 ForEach(Array(rankedResults.enumerated()), id: \.element.id) { index, result in
                     if let algo = algorithmMap[result.id] {
                         BenchmarkResultCard(
@@ -106,9 +107,7 @@ struct BenchmarkView: View {
                         )
                     }
                 }
-            })
-        } else {
-            return AnyView(EmptyView())
+            }
         }
     }
 }
