@@ -2,32 +2,45 @@ import XCTest
 @testable import Algorithms
 
 final class CustomColorTests: XCTestCase {
-    func testParsesThreeDigitRGB() {
-        XCTAssertEqual(CustomColor.rgba(fromHex: "#F80")?.r, 255)
-        XCTAssertEqual(CustomColor.rgba(fromHex: "#F80")?.g, 136)
-        XCTAssertEqual(CustomColor.rgba(fromHex: "#F80")?.b, 0)
-        XCTAssertEqual(CustomColor.rgba(fromHex: "#F80")?.a, 255)
+    func testEveryCaseHasTriColorPalette() {
+        let cases: [CustomColor] = [.blue, .gray, .green, .orange, .pink, .purple, .red, .black]
+        for color in cases {
+            XCTAssertFalse(color.background.isEmpty, "\(color) is missing a background hex")
+            XCTAssertFalse(color.foreground.isEmpty, "\(color) is missing a foreground hex")
+            XCTAssertFalse(color.neutral.isEmpty, "\(color) is missing a neutral hex")
+        }
     }
 
-    func testParsesSixDigitRGB() {
-        XCTAssertEqual(CustomColor.rgba(fromHex: "FF8800")?.r, 255)
-        XCTAssertEqual(CustomColor.rgba(fromHex: "FF8800")?.g, 136)
-        XCTAssertEqual(CustomColor.rgba(fromHex: "FF8800")?.b, 0)
-        XCTAssertEqual(CustomColor.rgba(fromHex: "FF8800")?.a, 255)
+    func testBackgroundHexValues() {
+        XCTAssertEqual(CustomColor.blue.background, "#c1def5")
+        XCTAssertEqual(CustomColor.green.background, "#cfe1d6")
+        XCTAssertEqual(CustomColor.red.background, "#f5d1cd")
+        XCTAssertEqual(CustomColor.black.background, "#000000")
     }
 
-    func testParsesEightDigitARGB() {
-        XCTAssertEqual(CustomColor.rgba(fromHex: "8044CC22")?.r, 68)
-        XCTAssertEqual(CustomColor.rgba(fromHex: "8044CC22")?.g, 204)
-        XCTAssertEqual(CustomColor.rgba(fromHex: "8044CC22")?.b, 34)
-        XCTAssertEqual(CustomColor.rgba(fromHex: "8044CC22")?.a, 128)
+    func testForegroundHexValues() {
+        XCTAssertEqual(CustomColor.blue.foreground, "#264a72")
+        XCTAssertEqual(CustomColor.green.foreground, "#2a533c")
+        XCTAssertEqual(CustomColor.red.foreground, "#6d3531")
+        XCTAssertEqual(CustomColor.black.foreground, "#000000")
     }
 
-    func testRejectsMalformedHex() {
-        XCTAssertNil(CustomColor.rgba(fromHex: "GGGGGG"))
-        XCTAssertNil(CustomColor.rgba(fromHex: "FF00GG"))
-        XCTAssertNil(CustomColor.rgba(fromHex: "12345"))
-        XCTAssertNil(CustomColor.rgba(fromHex: "123456789"))
+    func testNeutralHexValues() {
+        XCTAssertEqual(CustomColor.blue.neutral, "#2783de")
+        XCTAssertEqual(CustomColor.green.neutral, "#46a171")
+        XCTAssertEqual(CustomColor.red.neutral, "#e56458")
+        XCTAssertEqual(CustomColor.black.neutral, "#000000")
     }
 
+    func testAppColorResolvesAllRoles() {
+        let appColor = CustomColor.blue.appColor
+        XCTAssertNotEqual(appColor.background, appColor.foreground)
+        XCTAssertNotEqual(appColor.neutral, appColor.background)
+    }
+
+    func testBlackKeepsLightBackgroundCompatibility() {
+        // `.black` intentionally renders as white background with black text.
+        let black = CustomColor.black.appColor
+        XCTAssertEqual(black.foreground, .black)
+    }
 }

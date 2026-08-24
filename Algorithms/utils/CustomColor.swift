@@ -27,7 +27,7 @@ enum CustomColor {
     
     var foreground: String {
         switch self {
-        case .blue:   return "#264a72" // 2783de
+        case .blue:   return "#264a72"
         case .gray:   return "#808080"
         case .green:  return "#2a533c"
         case .orange: return "#6a4222"
