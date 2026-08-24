@@ -55,7 +55,6 @@ struct BenchmarkView: View {
             
             SortCanvasView(isPreview: true)
             .frame(height: 300)
-            .clipShape(RoundedRectangle(cornerRadius: 12))
 
             // Result cards: one per benchmarked algorithm, laid out in a grid.
             let rankedResults = viewModel.sortState.benchmarkResults

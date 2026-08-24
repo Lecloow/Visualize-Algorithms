@@ -54,5 +54,6 @@ struct SortCanvasView: View {
                 }
             }
         }
+        .clipShape(RoundedRectangle(cornerRadius: 12))
     }
 }

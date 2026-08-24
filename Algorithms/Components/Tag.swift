@@ -17,11 +17,18 @@ struct Tag: View {
     }
     
     var body: some View {
-        Text(content)
-            .foregroundStyle(color.foreground)
-            .padding(10)
-            .background(color.background)
-            .cornerRadius(100)
+        HStack {
+            RoundedRectangle(cornerRadius: 100)
+                .fill(color.neutral)
+                .frame(width: 15, height: 15)
+            Text(content)
+                .fontWeight(.medium)
+                .foregroundStyle(color.foreground)
+        }
+        .padding(.vertical, 5)
+        .padding(.horizontal, 10)
+        .background(color.background)
+        .cornerRadius(100)
     }
 }
 

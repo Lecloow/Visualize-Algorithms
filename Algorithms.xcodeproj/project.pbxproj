@@ -7,9 +7,20 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		9F52BBBD303B9CE4006C55E1 /* WrappingHStack in Frameworks */ = {isa = PBXBuildFile; productRef = 9FD460DE300262E1003D8F98 /* WrappingHStack */; };
 		9FD460DF300262E1003D8F98 /* WrappingHStack in Frameworks */ = {isa = PBXBuildFile; productRef = 9FD460DE300262E1003D8F98 /* WrappingHStack */; };
 		9FE8022A2FF4273500601486 /* XCTest.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9FE802292FF4273500601486 /* XCTest.framework */; };
 /* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		9FE802322FF4273500601486 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 9FE802042FF4273300601486 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 9FE8020B2FF4273300601486;
+			remoteInfo = Algorithms;
+		};
+/* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
 		9FE8020C2FF4273300601486 /* Algorithms.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Algorithms.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -37,21 +48,31 @@
 				9FD460DF300262E1003D8F98 /* WrappingHStack in Frameworks */,
 			);
 		};
-		9FE8022D2FF4273500601486 /* AlgorithmsTests Frameworks */ = {
+		9FE8022D2FF4273500601486 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			files = (
+				9F52BBBD303B9CE4006C55E1 /* WrappingHStack in Frameworks */,
 				9FE8022A2FF4273500601486 /* XCTest.framework in Frameworks */,
 			);
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		9F52BBBE303B9CE4006C55E1 /* Recovered References */ = {
+			isa = PBXGroup;
+			children = (
+				9FE802292FF4273500601486 /* XCTest.framework */,
+			);
+			name = "Recovered References";
+			sourceTree = "<group>";
+		};
 		9FE802032FF4273300601486 = {
 			isa = PBXGroup;
 			children = (
 				9FE8020E2FF4273300601486 /* Algorithms */,
 				9FE8022B2FF4273500601486 /* AlgorithmsTests */,
 				9FE8020D2FF4273300601486 /* Products */,
+				9F52BBBE303B9CE4006C55E1 /* Recovered References */,
 			);
 			sourceTree = "<group>";
 		};
@@ -92,9 +113,9 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 9FE802302FF4273500601486 /* Build configuration list for PBXNativeTarget "AlgorithmsTests" */;
 			buildPhases = (
-				9FE8022E2FF4273500601486 /* AlgorithmsTests Sources */,
-				9FE8022D2FF4273500601486 /* AlgorithmsTests Frameworks */,
-				9FE8022F2FF4273500601486 /* AlgorithmsTests Resources */,
+				9FE8022E2FF4273500601486 /* Sources */,
+				9FE8022D2FF4273500601486 /* Frameworks */,
+				9FE8022F2FF4273500601486 /* Resources */,
 			);
 			buildRules = (
 			);
@@ -160,6 +181,11 @@
 			files = (
 			);
 		};
+		9FE8022F2FF4273500601486 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			files = (
+			);
+		};
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
@@ -168,18 +194,7 @@
 			files = (
 			);
 		};
-/* End PBXSourcesBuildPhase section */
-
-/* Begin PBXResourcesBuildPhase section */
-		9FE8022F2FF4273500601486 /* AlgorithmsTests Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			files = (
-			);
-		};
-/* End PBXResourcesBuildPhase section */
-
-/* Begin PBXSourcesBuildPhase section */
-		9FE8022E2FF4273500601486 /* AlgorithmsTests Sources */ = {
+		9FE8022E2FF4273500601486 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			files = (
 			);
@@ -193,16 +208,6 @@
 			targetProxy = 9FE802322FF4273500601486 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
-
-/* Begin PBXContainerItemProxy section */
-		9FE802322FF4273500601486 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 9FE802042FF4273300601486 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 9FE8020B2FF4273300601486;
-			remoteInfo = Algorithms;
-		};
-/* End PBXContainerItemProxy section */
 
 /* Begin XCBuildConfiguration section */
 		9FE802152FF4273500601486 /* Debug configuration for PBXProject "Algorithms" */ = {
