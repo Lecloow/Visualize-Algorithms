@@ -37,10 +37,12 @@ struct BenchView: View {
 struct BenchmarkView: View {
     @Environment(ViewModel.self) var viewModel
     @State private var showingSelection = false
+    var algorithmMap: [Algorithm.ID: Algorithm] {
+        Dictionary(uniqueKeysWithValues: viewModel.algorithms.map { ($0.id, $0) })
+    }
 
     var body: some View {
         @Bindable var vm = viewModel
-        let algorithmMap = Dictionary(uniqueKeysWithValues: viewModel.algorithms.map { ($0.id, $0) })
         VStack {
             WrappingHStack(alignment: .leading) {
                 ForEach(viewModel.selection.sorted(), id: \.self) { algorithmID in
@@ -57,26 +59,8 @@ struct BenchmarkView: View {
             .frame(height: 300)
 
             // Result cards: one per benchmarked algorithm, laid out in a grid.
-            let rankedResults = viewModel.sortState.benchmarkResults
-                .sorted { $0.elapsedTime < $1.elapsedTime }
-            if !rankedResults.isEmpty {
-                let columns = rankedResults.count == 1
-                    ? [GridItem(.flexible())]
-                    : [GridItem(.flexible(), spacing: 12), GridItem(.flexible(), spacing: 12)]
-                LazyVGrid(columns: columns, spacing: 12) {
-                    ForEach(Array(rankedResults.enumerated()), id: \.element.id) { index, result in
-                        if let algo = algorithmMap[result.id] {
-                            BenchmarkResultCard(
-                                rank: index + 1,
-                                name: algo.title,
-                                elapsedTime: result.elapsedTime,
-                                relativeTime: result.elapsedTime / (rankedResults.map(\.elapsedTime).max() ?? 1),
-                                cardColor: algo.color
-                            )
-                        }
-                    }
-                }
-            }
+            resultCards
+            
             HStack {
                 Slider(
                     value: $vm.sortState.length,
@@ -103,6 +87,30 @@ struct BenchmarkView: View {
             BenchmarkSelectionSheet()
         }
     }
+    
+    var resultCards: some View {
+        let rankedResults = viewModel.sortState.benchmarkResults.sorted { $0.elapsedTime < $1.elapsedTime }
+        if !rankedResults.isEmpty {
+            let columns = rankedResults.count == 1
+                ? [GridItem(.flexible())]
+                : [GridItem(.flexible()), GridItem(.flexible())]
+            return AnyView(LazyVGrid(columns: columns, spacing: 5) {
+                ForEach(Array(rankedResults.enumerated()), id: \.element.id) { index, result in
+                    if let algo = algorithmMap[result.id] {
+                        BenchmarkResultCard(
+                            rank: index + 1,
+                            name: algo.title,
+                            elapsedTime: result.elapsedTime,
+                            relativeTime: result.elapsedTime / (rankedResults.map(\.elapsedTime).max() ?? 1),
+                            cardColor: algo.color
+                        )
+                    }
+                }
+            })
+        } else {
+            return AnyView(EmptyView())
+        }
+    }
 }
 
 struct BenchmarkResultCard: View {
@@ -113,11 +121,13 @@ struct BenchmarkResultCard: View {
     let cardColor: AppColor
 
     var body: some View {
-        let color = cardColor.background
+        let color = cardColor.neutral
         VStack(alignment: .leading, spacing: 8) {
             Text(name)
                 .font(.title3)
                 .fontWeight(.semibold)
+                .lineLimit(1)
+                .minimumScaleFactor(0.5)
             HStack {
                 Text("#\(rank)")
                     .font(.caption)
@@ -212,4 +222,3 @@ struct BenchmarkSelectionSheet: View {
         }
         .environment(vm)
 }
-

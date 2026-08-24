@@ -84,7 +84,7 @@ struct Model {
             Algorithm(title: "Insertion Sort", description: "Efficient sorting algorithm...", type: .sorting(.insertion), customColor: .orange),
             Algorithm(title: "Improved Insertion Sort", description: "Efficient sorting algorithm...", type: .sorting(.insertionImproved), customColor: .pink),
             Algorithm(title: "Binary Search", description: "Divide and conquer...", type: .searching(.binarySearch), customColor: .green),
-            Algorithm(title: "Dijkstra", description: "Shortest path algorithm...", type: .graph(.dijkstra), customColor: .pink)
+            Algorithm(title: "Dijkstra", description: "Shortest path algorithm...", type: .graph(.dijkstra), customColor: .red)
         ]
     }
     
