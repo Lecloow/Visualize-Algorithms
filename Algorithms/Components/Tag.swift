@@ -18,7 +18,7 @@ struct Tag: View {
     
     var body: some View {
         HStack {
-            RoundedRectangle(cornerRadius: 100)
+            Circle()
                 .fill(color.neutral)
                 .frame(width: 15, height: 15)
             Text(content)

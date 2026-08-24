@@ -37,16 +37,13 @@ struct BenchView: View {
 struct BenchmarkView: View {
     @Environment(ViewModel.self) var viewModel
     @State private var showingSelection = false
-    var algorithmMap: [Algorithm.ID: Algorithm] {
-        Dictionary(uniqueKeysWithValues: viewModel.algorithms.map { ($0.id, $0) })
-    }
 
     var body: some View {
         @Bindable var vm = viewModel
         VStack {
             WrappingHStack(alignment: .leading) {
                 ForEach(viewModel.selection.sorted(), id: \.self) { algorithmID in
-                    if let algo = algorithmMap[algorithmID] {
+                    if let algo = viewModel.algorithmMap[algorithmID] {
                         Tag(algo.title, color: algo.color)
                     }
                 }
@@ -97,7 +94,7 @@ struct BenchmarkView: View {
                 : [GridItem(.flexible()), GridItem(.flexible())]
             LazyVGrid(columns: columns, spacing: 5) {
                 ForEach(Array(rankedResults.enumerated()), id: \.element.id) { index, result in
-                    if let algo = algorithmMap[result.id] {
+                    if let algo = viewModel.algorithmMap[result.id] {
                         BenchmarkResultCard(
                             rank: index + 1,
                             name: algo.title,

@@ -9,9 +9,14 @@ import Foundation
 import SwiftUI
 
 @Observable class ViewModel {
-    private var model = createModel()
+    private var model: Model
 
     init() {
+        let model = Self.createModel()
+        self.model = model
+        self.algorithmMap = Dictionary(
+            uniqueKeysWithValues: model.algorithms.map { ($0.id, $0) }
+        )
         regenerateBenchmarkPreview()
     }
 
@@ -22,7 +27,10 @@ import SwiftUI
     var algorithms: [Algorithm] {
         model.algorithms
     }
+    
     var selection: Set<Algorithm.ID> = []
+    
+    let algorithmMap: [Algorithm.ID: Algorithm]
         
     private func getSortArray(difficulty: DifficultyType, size: Double = 100) -> [Int] {
         sortState.sortedIndices.removeAll()
