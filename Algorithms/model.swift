@@ -81,8 +81,11 @@ struct Model {
     init() {
         algorithms = [
             Algorithm(title: "Bubble Sort", description: "Efficient sorting algorithm...", type: .sorting(.bubble), customColor: .blue),
+            Algorithm(title: "Selection Sort", description: "Efficient sorting algorithm...", type: .sorting(.selection), customColor: .purple),
             Algorithm(title: "Insertion Sort", description: "Efficient sorting algorithm...", type: .sorting(.insertion), customColor: .orange),
             Algorithm(title: "Improved Insertion Sort", description: "Efficient sorting algorithm...", type: .sorting(.insertionImproved), customColor: .pink),
+            Algorithm(title: "Merge Sort", description: "Efficient sorting algorithm...", type: .sorting(.merge), customColor: .green),
+            Algorithm(title: "Quick Sort", description: "Efficient sorting algorithm...", type: .sorting(.quick), customColor: .red),
             Algorithm(title: "Binary Search", description: "Divide and conquer...", type: .searching(.binarySearch), customColor: .green),
             Algorithm(title: "Dijkstra", description: "Shortest path algorithm...", type: .graph(.dijkstra), customColor: .red)
         ]
@@ -90,11 +93,11 @@ struct Model {
     
     let sortAlgorithms: [SortAlgorithmType: any SortingAlgorithm] = [
         .bubble: BubbleSort(),
-        .selection: BubbleSort(),
+        .selection: SelectionSort(),
         .insertion: InsertionSort(),
         .insertionImproved: ImprovedInsertionSort(),
-        .merge: BubbleSort(),
-        .quick: BubbleSort()
+        .merge: MergeSort(),
+        .quick: QuickSort()
     ]
     
 }
