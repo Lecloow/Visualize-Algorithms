@@ -40,46 +40,52 @@ struct BenchmarkView: View {
 
     var body: some View {
         @Bindable var vm = viewModel
-        VStack {
-            WrappingHStack(alignment: .leading) {
-                ForEach(viewModel.selection.sorted(), id: \.self) { algorithmID in
-                    if let algo = viewModel.algorithmMap[algorithmID] {
-                        Tag(algo.title, color: algo.color)
+        GeometryReader { geometry in
+            ScrollView {
+                VStack {
+                    WrappingHStack(alignment: .leading) {
+                        ForEach(viewModel.selection.sorted(), id: \.self) { algorithmID in
+                            if let algo = viewModel.algorithmMap[algorithmID] {
+                                Tag(algo.title, color: algo.color)
+                            }
+                        }
+                        Button(action: { showingSelection = true }) {
+                            Text("add more")
+                        }
                     }
+                    
+                    SortCanvasView(isPreview: true)
+                        .frame(height: 300)
+                    
+                    // Result cards: one per benchmarked algorithm, laid out in a grid.
+                    resultCards
+                    
+                    HStack {
+                        Slider(
+                            value: $vm.sortState.length,
+                            in: 100...10000,
+                        )
+                        Text("length: \(Int(viewModel.sortState.length))")
+                    }
+                    .onChange(of: viewModel.sortState.length) {
+                        viewModel.regenerateBenchmarkPreview()
+                    }
+                    if viewModel.sortState.isSorting {
+                        ProgressView("Benchmarking…")
+                            .padding(4)
+                    }
+                    Button(action: { Task { await viewModel.startBenchmark() } }) {
+                        Text(viewModel.sortState.isSorting ? "Sorting ..." : "Start")
+                    }
+                    .buttonStyle(.glassProminent)
+                    .tint(viewModel.sortState.isSorting ? Color.gray : Color.blue)
+                    .disabled(viewModel.sortState.isSorting)
                 }
-                Button(action: { showingSelection = true }) {
-                    Text("add more")
-                }
+                .padding()
+                .padding(.top, geometry.safeAreaInsets.top)
             }
-            
-            SortCanvasView(isPreview: true)
-            .frame(height: 300)
-
-            // Result cards: one per benchmarked algorithm, laid out in a grid.
-            resultCards
-            
-            HStack {
-                Slider(
-                    value: $vm.sortState.length,
-                    in: 100...10000,
-                )
-                Text("length: \(Int(viewModel.sortState.length))")
-            }
-            .onChange(of: viewModel.sortState.length) {
-                viewModel.regenerateBenchmarkPreview()
-            }
-            if viewModel.sortState.isSorting {
-                ProgressView("Benchmarking…")
-                    .padding(4)
-            }
-            Button(action: { Task { await viewModel.startBenchmark() } }) {
-                Text(viewModel.sortState.isSorting ? "Sorting ..." : "Start")
-            }
-            .buttonStyle(.glassProminent)
-            .tint(viewModel.sortState.isSorting ? Color.gray : Color.blue)
-            .disabled(viewModel.sortState.isSorting)
+            .ignoresSafeArea(.all)
         }
-        .padding()
         .sheet(isPresented: $showingSelection) {
             BenchmarkSelectionSheet()
         }
