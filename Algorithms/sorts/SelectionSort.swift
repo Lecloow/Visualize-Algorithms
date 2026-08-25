@@ -11,6 +11,9 @@ struct SelectionSort: SortingAlgorithm {
 
     let name = "Selection Sort"
 
+    /// Generates the sorting steps for the provided array using selection sort.
+    /// - Parameter array: The array to sort.
+    /// - Returns: A stream of comparison, swap, and sorted-position steps.
     func generateSteps(from array: [Int]) -> AsyncStream<SortStep> {
         AsyncStream { continuation in
             var tempArray = array
@@ -32,6 +35,9 @@ struct SelectionSort: SortingAlgorithm {
         }
     }
     
+    /// Sorts a copy of the array using selection sort and measures the elapsed time.
+    /// - Parameter array: The array to sort.
+    /// - Returns: The sorting duration in seconds.
     nonisolated func sort(_ array: [Int]) -> TimeInterval {
         let start = DispatchTime.now().uptimeNanoseconds
         var tempArray = array

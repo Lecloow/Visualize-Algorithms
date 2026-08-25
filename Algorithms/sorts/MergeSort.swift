@@ -11,6 +11,9 @@ struct MergeSort: SortingAlgorithm {
 
     let name = "Merge Sort"
 
+    /// Generates the merge sort steps for an array.
+    /// - Parameter array: The array to sort.
+    /// - Returns: A stream of comparison, overwrite, and sorted-marker steps.
     func generateSteps(from array: [Int]) -> AsyncStream<SortStep> {
         AsyncStream { continuation in
             var tempArray = array
@@ -30,6 +33,14 @@ struct MergeSort: SortingAlgorithm {
         }
     }
 
+    /// Merges two sorted subranges into the specified array while emitting sorting steps.
+    /// - Parameters:
+    ///   - low: The first index of the range to merge.
+    ///   - mid: The last index of the left sorted subrange.
+    ///   - high: The last index of the range to merge.
+    ///   - temp: The array receiving the merged values.
+    ///   - scratch: Temporary storage for the values being merged.
+    ///   - continuation: The stream continuation receiving comparison and overwrite steps.
     private func merge(
         low: Int,
         mid: Int,
@@ -70,6 +81,8 @@ struct MergeSort: SortingAlgorithm {
         }
     }
     
+    /// Measures the time required to sort an integer array using merge sort.
+    /// - Returns: The elapsed sorting time in seconds.
     nonisolated func sort(_ array: [Int]) -> TimeInterval {
         let start = DispatchTime.now().uptimeNanoseconds
         var tempArray = array
@@ -86,6 +99,13 @@ struct MergeSort: SortingAlgorithm {
         return Double(end - start) / 1_000_000_000
     }
 
+    /// Merges two sorted ranges into the temporary array.
+    /// - Parameters:
+    ///   - low: The first index of the range to merge.
+    ///   - mid: The final index of the left sorted range.
+    ///   - high: The final index of the range to merge.
+    ///   - temp: The array receiving the merged values.
+    ///   - scratch: The buffer containing the values being merged.
     private nonisolated func merge(
         low: Int,
         mid: Int,
