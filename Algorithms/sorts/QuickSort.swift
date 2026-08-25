@@ -11,6 +11,9 @@ struct QuickSort: SortingAlgorithm {
 
     let name = "Quick Sort"
 
+    /// Creates a stream of steps that visualizes sorting the array with quicksort.
+    /// - Parameter array: The values to sort.
+    /// - Returns: A stream of comparison, swap, and sorted-position steps.
     func generateSteps(from array: [Int]) -> AsyncStream<SortStep> {
         AsyncStream { continuation in
             var tempArray = array
@@ -46,6 +49,9 @@ struct QuickSort: SortingAlgorithm {
         }
     }
     
+    /// Sorts a copy of the provided array and measures the sorting duration.
+    /// - Parameter array: The integer array to sort.
+    /// - Returns: The elapsed sorting time in seconds.
     nonisolated func sort(_ array: [Int]) -> TimeInterval {
         let start = DispatchTime.now().uptimeNanoseconds
         var tempArray = array
