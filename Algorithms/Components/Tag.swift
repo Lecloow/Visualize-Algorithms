@@ -21,6 +21,7 @@ struct Tag: View {
             Circle()
                 .fill(color.neutral)
                 .frame(width: 15, height: 15)
+                .glassEffect(in: Circle())
             Text(content)
                 .fontWeight(.medium)
                 .foregroundStyle(color.foreground)
