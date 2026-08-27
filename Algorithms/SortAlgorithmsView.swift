@@ -40,22 +40,24 @@ struct SortAlgorithmsView: View {
                 }
                 .buttonStyle(.glassProminent)
                 .tint(.red)
-            }
-            
-            Picker("Difficulty", selection: $vm.sortState.difficulty) {
-                ForEach(DifficultyType.allCases) { difficulty in
-                    Text(difficulty.rawValue)
-                        .tag(difficulty)
-                        .foregroundStyle(.primary)
+                
+                Picker("Difficulty", selection: $vm.sortState.difficulty) {
+                    ForEach(DifficultyType.allCases) { difficulty in
+                        Text(difficulty.rawValue)
+                            .tag(difficulty)
+                            .foregroundStyle(.primary)
+                    }
+                }
+                .lineLimit(1)
+                .fixedSize()
+                .pickerStyle(.menu)
+                .tint(.primary)
+                .background(RoundedRectangle(cornerRadius: 12).foregroundStyle(.secondary.opacity(0.2)))
+                .onChange(of: viewModel.sortState.difficulty) {
+                    viewModel.resetArray()
                 }
             }
-            .pickerStyle(.menu)
-            .tint(.primary)
-            .background(RoundedRectangle(cornerRadius: 12).foregroundStyle(.secondary.opacity(0.2)))
-            .onChange(of: viewModel.sortState.difficulty) {
-                viewModel.resetArray()
-            }
-            
+
             HStack {
                 NonLinearSlider(value: $vm.sortState.speed)
                 
