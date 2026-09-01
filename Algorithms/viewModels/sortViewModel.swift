@@ -22,14 +22,15 @@ final class SortViewModel {
     private func getSortArray(difficulty: DifficultyType, size: Double = 100) -> [Int] {
         sortState.sortedIndices.removeAll()
         sortState.highlightedIndices.removeAll()
+        let count = max(Int(size), 1)
 
         switch difficulty {
         case .bestCase:
-            return Array(1...Int(size))
+            return Array(1...count)
         case .worstCase:
-            return Array((1...Int(size)).reversed())
+            return Array((1...count).reversed())
         case .randomCase:
-            return Array(1...Int(size)).shuffled()
+            return Array(1...count).shuffled()
         case .sampleCase:
             return [5, 3, 8, 1, 9, 2, 7, 4, 6, 10]
         }
@@ -60,7 +61,6 @@ final class SortViewModel {
     }
 
     func startBenchmark(
-        algorithms: [Algorithm],
         selection: Set<Algorithm.ID>
     ) async {
         guard !sortState.isSorting else { return }
@@ -68,13 +68,17 @@ final class SortViewModel {
         sortState.benchmarkResults.removeAll()
 
         let array = getSortArray(difficulty: .randomCase, size: sortState.length)
-        let engines: [(id: UUID, name: String, engine: any SortingAlgorithm)] = selection.compactMap { id in
-            guard let algorithm = algorithms.first(where: { $0.id == id }),
+        let algorithmsByID = Dictionary(uniqueKeysWithValues: model.algorithms.map { ($0.id, $0) })
+        let engines: [(id: UUID, engine: any SortingAlgorithm)] = selection.compactMap { id in
+            guard let algorithm = algorithmsByID[id],
                   case .sorting(let type) = algorithm.type,
                   let engine = model.sortAlgorithms[type] else { return nil }
-            return (algorithm.id, algorithm.title, engine)
+            return (algorithm.id, engine)
         }
 
+        // Keep the measurements serial: the selected sorts are CPU-bound and several
+        // are quadratic, so concurrent runs contend for the same cores and make both
+        // the total benchmark and the individual timings worse on device/simulator.
         let results = await Task.detached(priority: .userInitiated) {
             engines.map { BenchmarkResult(id: $0.id, elapsedTime: $0.engine.sort(array)) }
         }.value

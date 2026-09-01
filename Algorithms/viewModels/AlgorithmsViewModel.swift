@@ -32,7 +32,6 @@ final class AlgorithmsViewModel {
         switch algorithm.type {
         case .sorting:
             await sortViewModel.startBenchmark(
-                algorithms: algorithms,
                 selection: selection
             )
         case .graph:
