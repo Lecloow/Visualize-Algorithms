@@ -9,7 +9,7 @@ import SwiftUI
 
 
 struct SortAlgorithmsView: View {
-    @Environment(ViewModel.self) var viewModel: ViewModel
+    @Environment(SortViewModel.self) var viewModel: SortViewModel
     let algorithm: Algorithm
     @State var showLearnMoreSheet = false
     
@@ -83,5 +83,5 @@ struct SortAlgorithmsView: View {
 
 #Preview {
     SortAlgorithmsView(algorithm: Algorithm(title: "Bubble Sort", description: "Efficient sorting algorithm...", type: .sorting(.bubble), customColor: .blue), showLearnMoreSheet: false)
-        .environment(ViewModel())
+        .environment(SortViewModel())
 }

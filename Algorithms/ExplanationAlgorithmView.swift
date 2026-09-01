@@ -15,7 +15,7 @@ struct ExplanationAlgorithmView: View {
         case .sorting:
             ExplanationSortAlgorithmView(algorithm: algorithm)
         case .searching:
-            Text("Algorithm unsupported for the moment")
+            ExplanationGraphAlgorithmView(algorithm: algorithm)
         case .graph:
             Text("Algorithm unsupported for the moment")
         }

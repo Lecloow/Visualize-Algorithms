@@ -9,14 +9,12 @@ import SwiftUI
 import WrappingHStack
 
 struct BenchView: View {
-    @Environment(ViewModel.self) var viewModel
+    @Environment(AlgorithmsViewModel.self) var algorithmsViewModel
     @State private var showingSelection = false
 
     var body: some View {
-        @Bindable var vm = viewModel
-
         VStack {
-            if viewModel.selection.isEmpty {
+            if algorithmsViewModel.selection.isEmpty {
                 ContentUnavailableView {
                     Label("No algorithm selected", systemImage: "chart.bar")
                 } description: {
@@ -35,11 +33,15 @@ struct BenchView: View {
 }
 
 struct BenchmarkView: View {
-    @Environment(ViewModel.self) var viewModel
+    @Environment(AlgorithmsViewModel.self) var viewModel
     @State private var showingSelection = false
 
+    private var sortViewModel: SortViewModel {
+        viewModel.sortViewModel
+    }
+
     var body: some View {
-        @Bindable var vm = viewModel
+        @Bindable var sortVM = sortViewModel
         GeometryReader { geometry in
             ScrollView {
                 VStack {
@@ -62,24 +64,24 @@ struct BenchmarkView: View {
                     
                     HStack {
                         Slider(
-                            value: $vm.sortState.length,
+                            value: $sortVM.sortState.length,
                             in: 100...10000,
                         )
-                        Text("length: \(Int(viewModel.sortState.length))")
+                        Text("length: \(Int(sortViewModel.sortState.length))")
                     }
-                    .onChange(of: viewModel.sortState.length) {
-                        viewModel.regenerateBenchmarkPreview()
+                    .onChange(of: sortViewModel.sortState.length) {
+                        sortViewModel.regenerateBenchmarkPreview()
                     }
-                    if viewModel.sortState.isSorting {
+                    if sortViewModel.sortState.isSorting {
                         ProgressView("Benchmarking…")
                             .padding(4)
                     }
                     Button(action: { Task { await viewModel.startBenchmark() } }) {
-                        Text(viewModel.sortState.isSorting ? "Sorting ..." : "Start")
+                        Text(sortViewModel.sortState.isSorting ? "Sorting ..." : "Start")
                     }
                     .buttonStyle(.glassProminent)
-                    .tint(viewModel.sortState.isSorting ? Color.gray : Color.blue)
-                    .disabled(viewModel.sortState.isSorting)
+                    .tint(sortViewModel.sortState.isSorting ? Color.gray : Color.blue)
+                    .disabled(sortViewModel.sortState.isSorting)
                 }
                 .padding()
                 .padding(.top, geometry.safeAreaInsets.top)
@@ -94,7 +96,7 @@ struct BenchmarkView: View {
     
     @ViewBuilder
     var resultCards: some View {
-        let rankedResults = viewModel.sortState.benchmarkResults.sorted { $0.elapsedTime < $1.elapsedTime }
+        let rankedResults = sortViewModel.sortState.benchmarkResults.sorted { $0.elapsedTime < $1.elapsedTime }
         if !rankedResults.isEmpty {
             let columns = rankedResults.count == 1
                 ? [GridItem(.flexible())]
@@ -117,7 +119,7 @@ struct BenchmarkView: View {
 }
 
 struct BenchmarkSelectionSheet: View {
-    @Environment(ViewModel.self) var viewModel
+    @Environment(AlgorithmsViewModel.self) var viewModel
     @Environment(\.dismiss) var dismiss
 
     var lockedFamily: AlgorithmCategory? {
@@ -166,11 +168,11 @@ struct BenchmarkSelectionSheet: View {
 
 #Preview {
     BenchView()
-        .environment(ViewModel())
+        .environment(AlgorithmsViewModel())
 }
 
 #Preview {
-    @Previewable @State var vm = ViewModel()
+    @Previewable @State var vm = AlgorithmsViewModel()
     
     BenchmarkView()
         .onAppear{

@@ -9,12 +9,13 @@ import SwiftUI
 
 @main
 struct AlgorithmsApp: App {
-    @State var AlgorithmViewModel = ViewModel()
+    @State private var algorithmsViewModel = AlgorithmsViewModel()
 
     var body: some Scene {
         WindowGroup {
             ContentView()
-                .environment(AlgorithmViewModel)
+                .environment(algorithmsViewModel)
+                .environment(algorithmsViewModel.sortViewModel)
         }
     }
 }

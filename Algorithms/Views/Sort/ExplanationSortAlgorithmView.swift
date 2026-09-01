@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct ExplanationSortAlgorithmView: View {
-    @Environment(ViewModel.self) var viewModel: ViewModel
+    @Environment(SortViewModel.self) var viewModel: SortViewModel
     let algorithm: Algorithm
     
     var body: some View {

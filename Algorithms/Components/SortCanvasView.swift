@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct SortCanvasView: View {
-    @Environment(ViewModel.self) var viewModel: ViewModel
+    @Environment(SortViewModel.self) var viewModel: SortViewModel
     let isPreview: Bool
 
     var array: [Int] {

@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct HomeView: View {
-    @Environment(ViewModel.self) var viewModel: ViewModel
+    @Environment(AlgorithmsViewModel.self) var viewModel: AlgorithmsViewModel
 
     var body: some View {
         List {
@@ -33,5 +33,5 @@ struct HomeView: View {
 
 #Preview {
     HomeView()
-        .environment(ViewModel())
+        .environment(AlgorithmsViewModel())
 }
