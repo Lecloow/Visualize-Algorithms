@@ -1,0 +1,163 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Bauhaus Clock</title>
+<style>
+  :root{
+    --red:#D62D20;
+    --blue:#0057B8;
+    --yellow:#FFD700;
+    --black:#111;
+    --white:#F6F4F0;
+    --grid:#111;
+  }
+  *{box-sizing:border-box}
+  html,body{height:100%}
+  body{
+    margin:0;
+    font-family:"Helvetica Neue",Helvetica,Arial,sans-serif;
+    background:var(--white);
+    color:var(--black);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding:24px;
+  }
+  .frame{
+    width:min(920px,100%);
+    border:3px solid var(--black);
+    padding:28px;
+    display:grid;
+    grid-template-columns:1.2fr 1fr;
+    gap:28px;
+  }
+  .clock{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    grid-template-rows:auto auto auto;
+    gap:14px;
+    align-content:center;
+  }
+  .digit{
+    background:var(--black);
+    color:var(--white);
+    font-weight:800;
+    font-size:clamp(64px,14vw,160px);
+    line-height:1;
+    text-align:center;
+    padding:18px 10px;
+    letter-spacing:.04em;
+  }
+  .sep{
+    font-weight:800;
+    font-size:clamp(36px,8vw,90px);
+    color:var(--black);
+    align-self:center;
+    justify-self:center;
+  }
+  .meta{
+    display:flex;
+    flex-direction:column;
+    gap:16px;
+    justify-content:center;
+  }
+  .card{
+    border:3px solid var(--black);
+    padding:18px;
+  }
+  .card.red{background:var(--red);color:var(--white)}
+  .card.blue{background:var(--blue);color:var(--white)}
+  .card.yellow{background:var(--yellow);color:var(--black)}
+  .card.black{background:var(--black);color:var(--white)}
+  .label{
+    text-transform:uppercase;
+    font-size:12px;
+    letter-spacing:.18em;
+    opacity:.9;
+    margin-bottom:6px;
+  }
+  .value{
+    font-weight:700;
+    font-size:clamp(20px,3.2vw,34px);
+    line-height:1.1;
+  }
+  .square{
+    width:100%;
+    aspect-ratio:1/1;
+    border:3px solid var(--black);
+  }
+  .square.red{background:var(--red)}
+  .square.blue{background:var(--blue)}
+  .square.yellow{background:var(--yellow)}
+  .square.black{background:var(--black)}
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+  @media (max-width:640px){
+    .frame{grid-template-columns:1fr}
+  }
+</style>
+</head>
+<body>
+  <div class="frame">
+    <div class="clock">
+      <div class="digit" id="h1">0</div>
+      <div class="digit" id="h2">0</div>
+      <div class="sep">:</div>
+      <div class="digit" id="m1">0</div>
+      <div class="digit" id="m2">0</div>
+      <div class="sep">:</div>
+      <div class="digit" id="s1">0</div>
+      <div class="digit" id="s2">0</div>
+    </div>
+    <div class="meta">
+      <div class="grid2">
+        <div class="card red">
+          <div class="label">Date</div>
+          <div class="value" id="date">—</div>
+        </div>
+        <div class="card blue">
+          <div class="label">Day</div>
+          <div class="value" id="day">—</div>
+        </div>
+      </div>
+      <div class="grid2">
+        <div class="square yellow"></div>
+        <div class="square black"></div>
+      </div>
+      <div class="grid2">
+        <div class="card black">
+          <div class="label">Focus</div>
+          <div class="value" id="focus">Deep work</div>
+        </div>
+        <div class="card" style="background:var(--white);color:var(--black)">
+          <div class="label">Progress</div>
+          <div class="value" id="progress">0 / 0</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script>
+    const pad = n => String(n).padStart(2,'0');
+    const days = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+    const months = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+    const focuses = ['Deep work','Active recall','Problem sets','Spaced review','Proof writing','Code practice'];
+    function tick(){
+      const now = new Date();
+      const h = pad(now.getHours()), m = pad(now.getMinutes()), s = pad(now.getSeconds());
+      document.getElementById('h1').textContent = h[0];
+      document.getElementById('h2').textContent = h[1];
+      document.getElementById('m1').textContent = m[0];
+      document.getElementById('m2').textContent = m[1];
+      document.getElementById('s1').textContent = s[0];
+      document.getElementById('s2').textContent = s[1];
+      document.getElementById('date').textContent = `${months[now.getMonth()]} ${now.getDate()}, ${now.getFullYear()}`;
+      document.getElementById('day').textContent = days[now.getDay()];
+      const seed = now.getDate() + now.getMonth()*31;
+      document.getElementById('focus').textContent = focuses[seed % focuses.length];
+    }
+    tick();
+    setInterval(tick, 1000);
+  </script>
+</body>
+</html>
